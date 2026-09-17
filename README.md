@@ -1,16 +1,69 @@
-# React + Vite
+# Веб-сайт готельного комплексу
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Навчальний ReactJS-проєкт веб-сайту готельного комплексу.
 
-Currently, two official plugins are available:
+Поточний результат: створено початкову сторінку з інформацією про номери готельного комплексу.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Середовище
 
-## React Compiler
+- Node.js: v24.21.0
+- npm: 11.19.0
+- Git: 2.55.0
+- Docker: 29.8.0
+- Docker Compose: v5.5.1
+- Основне середовище: Windows
+- Редактор: Visual Studio Code
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Запуск
 
-## Expanding the ESLint configuration
+Для запуску застосунку використовується команда:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```powershell
+npm.cmd run dev
+```
+
+Після запуску застосунок доступний за адресою:
+
+```text
+http://localhost:5173/
+```
+
+## Запуск через Docker
+
+Для запуску проєкту через Docker використовуються команди:
+
+```powershell
+docker compose build
+docker compose run --rm web npm install
+docker compose up
+```
+
+## Збірка
+
+Для створення виробничої збірки використовується команда:
+
+```powershell
+npm.cmd run build
+```
+
+Для перевірки готової збірки використовується команда:
+
+```powershell
+npm.cmd run preview
+```
+
+Після запуску готова збірка доступна за адресою:
+
+```text
+http://localhost:4173/
+```
+
+## План проєкту
+
+Детальний план курсового проєкту знаходиться у файлі:
+
+```text
+docs/project-plan.md
+```
+
+У наступних лабораторних роботах планується розширення структури вебзастосунку, створення нових компонентів, сторінок та інтерактивних можливостей.
