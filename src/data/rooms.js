@@ -1,0 +1,1 @@
+export const rooms = [{ id: 1, name: 'Стандарт', price: 1800, guests: 2, status: 'Доступний' }, { id: 2, name: 'Люкс', price: 3200, guests: 2, status: 'Доступний' }, { id: 3, name: 'Сімейний', price: 4000, guests: 4, status: 'Зайнятий' }]

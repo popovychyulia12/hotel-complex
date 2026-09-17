@@ -1,0 +1,1 @@
+export default function RoomCard({ room }) { return <article className="room-card"><h3>{room.name}</h3><p>Кількість гостей: {room.guests}</p><p>Ціна: {room.price} грн/доба</p><p>Статус: {room.status}</p></article> }
