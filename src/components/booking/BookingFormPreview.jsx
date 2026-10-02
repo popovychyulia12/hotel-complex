@@ -1,9 +1,18 @@
 import AppButton from '../ui/AppButton.jsx'
 import FormField from '../ui/FormField.jsx'
 
-export default function BookingFormPreview({ idPrefix, roomName }) {
+export default function BookingFormPreview({
+  idPrefix,
+  roomName,
+  draft,
+  onGuestNameChange,
+  onCommentChange,
+  onNeedsHelpChange,
+  onReset,
+}) {
   const nameId = `${idPrefix}-name`
   const commentId = `${idPrefix}-comment`
+  const helpId = `${idPrefix}-help`
 
   return (
     <form onSubmit={(event) => event.preventDefault()}>
@@ -14,6 +23,8 @@ export default function BookingFormPreview({ idPrefix, roomName }) {
           id={nameId}
           name="guestName"
           type="text"
+          value={draft.guestName}
+          onChange={(event) => onGuestNameChange(event.target.value)}
         />
       </FormField>
 
@@ -36,14 +47,29 @@ export default function BookingFormPreview({ idPrefix, roomName }) {
           id={commentId}
           name="comment"
           rows={3}
-          defaultValue=""
+          value={draft.comment}
+          onChange={(event) => onCommentChange(event.target.value)}
           aria-describedby={`${commentId}-hint`}
         />
       </FormField>
 
+      <label htmlFor={helpId}>
+        <input
+          id={helpId}
+          type="checkbox"
+          checked={draft.needsHelp}
+          onChange={(event) => onNeedsHelpChange(event.target.checked)}
+        />
+        Потрібна допомога адміністратора
+      </label>
+
       <div className="form-actions">
-        <AppButton type="reset" variant="secondary">
-          Очистити текст
+        <AppButton
+          type="button"
+          variant="secondary"
+          onClick={onReset}
+        >
+          Очистити форму
         </AppButton>
 
         <AppButton disabled>

@@ -1,7 +1,7 @@
 import AppLayout from './components/layout/AppLayout.jsx'
-import HomePage from './pages/HomePage.jsx'
-import BookingPage from './pages/BookingPage.jsx'
-import { rooms } from './data/rooms.js'
+import RoomsContainer from './pages/RoomsContainer.jsx'
+import BookingContainer from './pages/BookingContainer.jsx'
+import RoomSelectionProvider from './providers/RoomSelectionProvider.jsx'
 
 const navigationLinks = [
   { href: '#about', label: 'Про готель' },
@@ -10,12 +10,12 @@ const navigationLinks = [
 ]
 
 export default function App() {
-  const exampleRoom = rooms.find((room) => room.id === 1)
-
   return (
     <AppLayout title="Готельний комплекс" links={navigationLinks}>
-      <HomePage />
-     <BookingPage room={exampleRoom} />
+      <RoomSelectionProvider>
+        <RoomsContainer />
+        <BookingContainer />
+      </RoomSelectionProvider>
     </AppLayout>
   )
 }
