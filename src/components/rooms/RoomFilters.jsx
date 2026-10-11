@@ -1,37 +1,47 @@
+
 import AppButton from '../ui/AppButton.jsx'
 import FormField from '../ui/FormField.jsx'
 
 export default function RoomFilters({
   query,
   availableOnly,
-  onQueryChange,
-  onAvailableOnlyChange,
   onReset,
 }) {
   return (
-    <div className="room-filters">
+    <form
+      key={`${query}-${availableOnly}`}
+      className="room-filters"
+      method="get"
+      action="/rooms"
+    >
       <FormField id="room-query" label="Пошук за назвою">
         <input
           id="room-query"
           type="search"
-          name="query"
-          value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
+          name="q"
+          defaultValue={query}
         />
       </FormField>
 
       <label className="checkbox-field">
         <input
           type="checkbox"
-          checked={availableOnly}
-          onChange={(event) => onAvailableOnlyChange(event.target.checked)}
+          name="available"
+          value="1"
+          defaultChecked={availableOnly}
         />
         Лише доступні
       </label>
 
-      <AppButton variant="secondary" onClick={onReset}>
+      <button type="submit">Застосувати фільтри</button>
+
+      <AppButton
+        type="button"
+        variant="secondary"
+        onClick={onReset}
+      >
         Скинути фільтри
       </AppButton>
-    </div>
+    </form>
   )
 }

@@ -1,4 +1,7 @@
+
+import { Outlet } from 'react-router'
 import SiteHeader from './SiteHeader.jsx'
+import RoomSelectionProvider from '../../providers/RoomSelectionProvider.jsx'
 
 export default function AppLayout({ title, links, children }) {
   return (
@@ -9,9 +12,11 @@ export default function AppLayout({ title, links, children }) {
 
       <SiteHeader title={title} links={links} />
 
-      <main id="main-content" tabIndex={-1}>
-        {children}
-      </main>
+      <RoomSelectionProvider>
+        <main id="main-content" tabIndex={-1}>
+          {children ?? <Outlet />}
+        </main>
+      </RoomSelectionProvider>
 
       <footer>
         <p>Навчальний проєкт веб-сайту готельного комплексу.</p>

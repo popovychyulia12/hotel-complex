@@ -1,8 +1,13 @@
-import { useState } from 'react'
+
+import { useLocation, useNavigate } from 'react-router'
 
 export default function useRoomFilters(rooms) {
-  const [query, setQuery] = useState('')
-  const [availableOnly, setAvailableOnly] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const searchParams = new URLSearchParams(location.search)
+  const query = searchParams.get('q') ?? ''
+  const availableOnly = searchParams.get('available') === '1'
 
   const normalizedQuery = query.trim().toLocaleLowerCase('uk')
 
@@ -18,16 +23,16 @@ export default function useRoomFilters(rooms) {
   })
 
   function resetFilters() {
-    setQuery('')
-    setAvailableOnly(false)
+    navigate(
+      { pathname: location.pathname, search: '' },
+      { replace: true }
+    )
   }
 
   return {
     query,
     availableOnly,
     visibleRooms,
-    setQuery,
-    setAvailableOnly,
     resetFilters,
   }
 }

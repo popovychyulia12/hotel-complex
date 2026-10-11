@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import Section from '../components/ui/Section.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import RoomStatus from '../components/rooms/RoomStatus.jsx'
@@ -14,27 +16,43 @@ function createEmptyDraft() {
   }
 }
 
-export default function BookingPage({ room, onClearSelection }) {
-  const [draft, setDraft] = useState(createEmptyDraft)
+export default function BookingPage({
+  room,
+  onClearSelection,
+  title = 'Підготовка бронювання',
+  initialDraft,
+  onCancel,
+  cancelLabel = 'Скасувати вибір номера',
+}) {
+  const [draft, setDraft] = useState(() => ({
+    ...createEmptyDraft(),
+    ...(initialDraft ?? {}),
+  }))
+
+  const pageTitle = room
+    ? `${title}: ${room.name}`
+    : title
 
   useEffect(() => {
     const previousTitle = document.title
-
-    document.title = room
-      ? `Готельний комплекс: ${room.name}`
-      : 'Готельний комплекс'
+    document.title = `Готельний комплекс: ${pageTitle}`
 
     return () => {
       document.title = previousTitle
     }
-  }, [room])
+  }, [pageTitle])
 
   function resetDraft() {
-    setDraft(createEmptyDraft())
+    setDraft({
+      ...createEmptyDraft(),
+      ...(initialDraft ?? {}),
+    })
   }
 
+  const handleCancel = onCancel ?? onClearSelection
+
   return (
-    <Section id="booking" title="Підготовка бронювання">
+    <Section id="booking" title={title}>
       {room ? (
         <>
           <p>
@@ -50,13 +68,22 @@ export default function BookingPage({ room, onClearSelection }) {
             roomName={room.name}
             draft={draft}
             onGuestNameChange={(guestName) =>
-              setDraft((previous) => ({ ...previous, guestName }))
+              setDraft((previous) => ({
+                ...previous,
+                guestName,
+              }))
             }
             onCommentChange={(comment) =>
-              setDraft((previous) => ({ ...previous, comment }))
+              setDraft((previous) => ({
+                ...previous,
+                comment,
+              }))
             }
             onNeedsHelpChange={(needsHelp) =>
-              setDraft((previous) => ({ ...previous, needsHelp }))
+              setDraft((previous) => ({
+                ...previous,
+                needsHelp,
+              }))
             }
             onReset={resetDraft}
           />
@@ -68,15 +95,15 @@ export default function BookingPage({ room, onClearSelection }) {
 
           <AppButton
             variant="secondary"
-            onClick={onClearSelection}
+            onClick={handleCancel}
           >
-            Скасувати вибір номера
+            {cancelLabel}
           </AppButton>
         </>
       ) : (
         <EmptyState title="Номер для бронювання не вибрано">
           <p>
-            <a href="#rooms">Переглянути номери</a>
+            <Link to="/rooms">Переглянути номери</Link>
           </p>
         </EmptyState>
       )}

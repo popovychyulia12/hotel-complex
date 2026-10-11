@@ -1,30 +1,17 @@
-import { useState } from 'react'
+
 import { rooms } from '../data/rooms.js'
 import Section from '../components/ui/Section.jsx'
 import RoomFilters from '../components/rooms/RoomFilters.jsx'
 import RoomList from '../components/rooms/RoomList.jsx'
+import useRoomFilters from '../hooks/useRoomFilters.js'
 
 export default function HomePage({ selectedId, onSelect }) {
-  const [query, setQuery] = useState('')
-  const [availableOnly, setAvailableOnly] = useState(false)
-
-  const normalizedQuery = query.trim().toLocaleLowerCase('uk')
-
-  const visibleRooms = rooms.filter((room) => {
-    const matchesQuery = room.name
-      .toLocaleLowerCase('uk')
-      .includes(normalizedQuery)
-
-    const matchesAvailability =
-      !availableOnly || room.status === 'Доступний'
-
-    return matchesQuery && matchesAvailability
-  })
-
-  function resetFilters() {
-    setQuery('')
-    setAvailableOnly(false)
-  }
+  const {
+    query,
+    availableOnly,
+    visibleRooms,
+    resetFilters,
+  } = useRoomFilters(rooms)
 
   return (
     <>
@@ -38,8 +25,6 @@ export default function HomePage({ selectedId, onSelect }) {
         <RoomFilters
           query={query}
           availableOnly={availableOnly}
-          onQueryChange={setQuery}
-          onAvailableOnlyChange={setAvailableOnly}
           onReset={resetFilters}
         />
 

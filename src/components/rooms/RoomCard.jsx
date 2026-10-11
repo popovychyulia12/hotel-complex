@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { useState } from 'react'
 import RoomStatus from './RoomStatus.jsx'
 import AppButton from '../ui/AppButton.jsx'
@@ -12,7 +13,9 @@ export default function RoomCard({
 
   return (
     <article className="room-card">
-      <h3>{room.name}</h3>
+      <h3>
+  <Link to={`/rooms/${room.id}`}>{room.name}</Link>
+</h3>
 
       <p>
         Статус: <RoomStatus status={room.status} />
