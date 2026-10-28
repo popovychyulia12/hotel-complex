@@ -1,6 +1,9 @@
 
 import { Outlet } from 'react-router'
+
 import SiteHeader from './SiteHeader.jsx'
+import SiteFooter from './SiteFooter.jsx'
+
 import RoomSelectionProvider from '../../providers/RoomSelectionProvider.jsx'
 
 export default function AppLayout({ title, links, children }) {
@@ -18,9 +21,7 @@ export default function AppLayout({ title, links, children }) {
         </main>
       </RoomSelectionProvider>
 
-      <footer>
-        <p>Навчальний проєкт веб-сайту готельного комплексу.</p>
-      </footer>
+      <SiteFooter />
     </>
   )
 }

@@ -1,6 +1,6 @@
 
 import { Link, useNavigate, useParams } from 'react-router'
-import { bookings } from '../data/bookings.js'
+import { useBookings } from '../contexts/BookingsContext.jsx'
 import { rooms } from '../data/rooms.js'
 import BookingPage from './BookingPage.jsx'
 
@@ -8,46 +8,81 @@ export default function BookingEditPage() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
 
-  const booking = bookings.find(
-    (item) => String(item.id) === bookingId
-  )
+  const { getBookingById, updateBooking } = useBookings()
+
+  const booking = getBookingById(bookingId)
 
   if (!booking) {
     return (
       <section>
         <h1>Бронювання не знайдено</h1>
         <p>Перевірте адресу або виберіть інше бронювання.</p>
-        <Link to="/bookings">Повернутися до бронювань</Link>
+        <Link to="/bookings">
+          Повернутися до бронювань
+        </Link>
       </section>
     )
   }
 
+  // Знаходимо категорію номера
   const room = rooms.find(
-    (item) => item.id === booking.roomId
+    (item) =>
+      String(item.id) === String(booking.roomId) ||
+      item.name === booking.roomName ||
+      (item.id === 1 && booking.roomName === 'Стандарт')
   )
 
   if (!room) {
     return (
       <section>
-        <h1>Номер не знайдено</h1>
-        <p>Для цього бронювання не вдалося знайти номер.</p>
-        <Link to="/bookings">Повернутися до бронювань</Link>
+        <h1>Категорію номера не знайдено</h1>
+        <p>
+          Для цього бронювання не вдалося знайти
+          відповідну категорію номера.
+        </p>
+        <Link to="/bookings">
+          Повернутися до бронювань
+        </Link>
       </section>
     )
   }
 
   const initialDraft = {
-    guestName: booking.guestName,
-    comment: booking.comment,
-    needsHelp: booking.needsHelp,
+    guestName: booking.guestName ?? '',
+    phone: booking.phone ?? '',
+    checkIn: booking.checkIn ?? '',
+    checkOut: booking.checkOut ?? '',
+    guestsCount: String(booking.guestsCount ?? 1),
+    comment: booking.comment ?? '',
+    needsHelp: booking.needsHelp ?? false,
+  }
+
+  function handleSave(draft) {
+    const result = updateBooking(booking.id, {
+      ...draft,
+      roomId: room.id,
+      roomName: room.name,
+      guestName: draft.guestName.trim(),
+      phone: draft.phone.trim(),
+      guestsCount: Number(draft.guestsCount),
+      comment: (draft.comment ?? '').trim(),
+    })
+
+    if (result.success) {
+      navigate('/bookings')
+    }
+
+    return result
   }
 
   return (
     <BookingPage
       key={booking.id}
+      bookingId={booking.id}
       room={room}
-      title={`Редагування бронювання №${booking.id}`}
+      title="Редагування бронювання"
       initialDraft={initialDraft}
+      onSave={handleSave}
       onCancel={() => navigate('/bookings')}
       cancelLabel="Повернутися до бронювань"
     />

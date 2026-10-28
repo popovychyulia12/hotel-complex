@@ -5,12 +5,22 @@ import MainNav from '../navigation/MainNav.jsx'
 export default function SiteHeader({ title, links }) {
   return (
     <header className="site-header">
-      <Link className="site-title" to="/">
-        {title}
-      </Link>
+      <div className="header-inner">
+        <Link className="site-title" to="/">
+          <span className="header-logo-mark">✦</span>
 
-      <MainNav links={links} />
+          <span className="header-brand">
+            <strong>{title}</strong>
+            <small>HOTEL & WELLNESS</small>
+          </span>
+        </Link>
+
+        <MainNav links={links} />
+
+        <Link to="/rooms" className="header-book-button">
+          Забронювати
+        </Link>
+      </div>
     </header>
   )
 }
-

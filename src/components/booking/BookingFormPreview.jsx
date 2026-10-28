@@ -1,3 +1,4 @@
+
 import AppButton from '../ui/AppButton.jsx'
 import FormField from '../ui/FormField.jsx'
 
@@ -5,75 +6,127 @@ export default function BookingFormPreview({
   idPrefix,
   roomName,
   draft,
-  onGuestNameChange,
-  onCommentChange,
-  onNeedsHelpChange,
+  onFieldChange,
   onReset,
+  onSubmit,
+  errors = {},
 }) {
-  const nameId = `${idPrefix}-name`
-  const commentId = `${idPrefix}-comment`
-  const helpId = `${idPrefix}-help`
+  const fieldId = (name) => `${idPrefix}-${name}`
+
+  function renderError(name) {
+    return errors[name] ? (
+      <p className="field-error" role="alert">
+        {errors[name]}
+      </p>
+    ) : null
+  }
 
   return (
-    <form onSubmit={(event) => event.preventDefault()}>
-      <p>Це макет форми бронювання. Дані поки не зберігаються.</p>
+    <form onSubmit={(event) => {
+      event.preventDefault()
+      onSubmit?.()
+    }}>
+      <h3>Дані для бронювання</h3>
 
-      <FormField id={nameId} label="Ім’я гостя">
+      <FormField id={fieldId('guestName')} label="Ім’я гостя *">
         <input
-          id={nameId}
-          name="guestName"
+          id={fieldId('guestName')}
           type="text"
-          value={draft.guestName}
-          onChange={(event) => onGuestNameChange(event.target.value)}
+          value={draft.guestName ?? ''}
+          onChange={(e) => onFieldChange('guestName', e.target.value)}
+          aria-invalid={Boolean(errors.guestName)}
         />
+        {renderError('guestName')}
       </FormField>
 
-      <FormField id={`${idPrefix}-room`} label="Номер">
+      <FormField id={fieldId('phone')} label="Номер телефону *">
         <input
-          id={`${idPrefix}-room`}
-          name="room"
+          id={fieldId('phone')}
+          type="tel"
+          placeholder="+380XXXXXXXXX"
+          value={draft.phone ?? ''}
+          onChange={(e) => onFieldChange('phone', e.target.value)}
+          aria-invalid={Boolean(errors.phone)}
+        />
+        {renderError('phone')}
+      </FormField>
+
+      <FormField id={fieldId('room')} label="Обраний номер">
+        <input
+          id={fieldId('room')}
           type="text"
           value={roomName}
           readOnly
         />
       </FormField>
 
-      <FormField
-        id={commentId}
-        label="Побажання"
-        hint="Наприклад, побажання щодо часу заселення."
-      >
-        <textarea
-          id={commentId}
-          name="comment"
-          rows={3}
-          value={draft.comment}
-          onChange={(event) => onCommentChange(event.target.value)}
-          aria-describedby={`${commentId}-hint`}
+      <FormField id={fieldId('checkIn')} label="Дата заїзду *">
+        <input
+          id={fieldId('checkIn')}
+          type="date"
+          value={draft.checkIn ?? ''}
+          onChange={(e) => onFieldChange('checkIn', e.target.value)}
+          aria-invalid={Boolean(errors.checkIn)}
         />
+        {renderError('checkIn')}
       </FormField>
 
-      <label htmlFor={helpId}>
+      <FormField id={fieldId('checkOut')} label="Дата виїзду *">
         <input
-          id={helpId}
+          id={fieldId('checkOut')}
+          type="date"
+          value={draft.checkOut ?? ''}
+          onChange={(e) => onFieldChange('checkOut', e.target.value)}
+          aria-invalid={Boolean(errors.checkOut)}
+        />
+        {renderError('checkOut')}
+      </FormField>
+
+      <FormField id={fieldId('guestsCount')} label="Кількість гостей *">
+        <input
+          id={fieldId('guestsCount')}
+          type="number"
+          min="1"
+          step="1"
+          value={draft.guestsCount ?? 1}
+          onChange={(e) => onFieldChange('guestsCount', e.target.value)}
+          aria-invalid={Boolean(errors.guestsCount)}
+        />
+        {renderError('guestsCount')}
+      </FormField>
+
+      <FormField
+        id={fieldId('comment')}
+        label="Додаткові побажання"
+        hint="Наприклад, раннє заселення або особливі побажання."
+      >
+        <textarea
+          id={fieldId('comment')}
+          rows={3}
+          maxLength={300}
+          value={draft.comment ?? ''}
+          onChange={(e) => onFieldChange('comment', e.target.value)}
+        />
+        {renderError('comment')}
+      </FormField>
+
+      <label htmlFor={fieldId('needsHelp')}>
+        <input
+          id={fieldId('needsHelp')}
           type="checkbox"
-          checked={draft.needsHelp}
-          onChange={(event) => onNeedsHelpChange(event.target.checked)}
+          checked={draft.needsHelp ?? false}
+          onChange={(e) => onFieldChange('needsHelp', e.target.checked)}
         />
         Потрібна допомога адміністратора
       </label>
 
       <div className="form-actions">
-        <AppButton
-          type="button"
-          variant="secondary"
-          onClick={onReset}
-        >
+        <AppButton variant="secondary" onClick={onReset}>
           Очистити форму
         </AppButton>
 
-        <AppButton disabled>
-          Бронювання буде доступне пізніше
+        <AppButton type="submit">
+          Зберегти бронювання
         </AppButton>
       </div>
     </form>
