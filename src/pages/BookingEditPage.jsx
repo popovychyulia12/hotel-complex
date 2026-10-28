@@ -8,9 +8,36 @@ export default function BookingEditPage() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
 
-  const { getBookingById, updateBooking } = useBookings()
+  const {
+    getBookingById,
+    updateBooking,
+    loading,
+    error,
+    retry,
+  } = useBookings()
 
   const booking = getBookingById(bookingId)
+
+  if (loading) {
+    return (
+      <section role="status">
+        <h1>Завантаження бронювання...</h1>
+        <p>Зачекайте, отримуємо дані.</p>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section role="alert">
+        <h1>Не вдалося завантажити бронювання</h1>
+        <p>{error}</p>
+        <button type="button" onClick={retry}>
+          Спробувати ще раз
+        </button>
+      </section>
+    )
+  }
 
   if (!booking) {
     return (
@@ -24,7 +51,6 @@ export default function BookingEditPage() {
     )
   }
 
-  // Знаходимо категорію номера
   const room = rooms.find(
     (item) =>
       String(item.id) === String(booking.roomId) ||
@@ -57,8 +83,8 @@ export default function BookingEditPage() {
     needsHelp: booking.needsHelp ?? false,
   }
 
-  function handleSave(draft) {
-    const result = updateBooking(booking.id, {
+  async function handleSave(draft) {
+    const result = await updateBooking(booking.id, {
       ...draft,
       roomId: room.id,
       roomName: room.name,
@@ -75,7 +101,10 @@ export default function BookingEditPage() {
     return result
   }
 
-  return (
+  
+return (
+  <>
+
     <BookingPage
       key={booking.id}
       bookingId={booking.id}
@@ -86,5 +115,7 @@ export default function BookingEditPage() {
       onCancel={() => navigate('/bookings')}
       cancelLabel="Повернутися до бронювань"
     />
-  )
+  </>
+)
 }
+

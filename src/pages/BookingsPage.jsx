@@ -1,4 +1,5 @@
 
+import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useBookings } from '../contexts/BookingsContext.jsx'
 import { rooms } from '../data/rooms.js'
@@ -27,9 +28,15 @@ export default function BookingsPage() {
     notice,
     setNotice,
     deleteBooking,
+    loading,
+    error,
+    retry,
   } = useBookings()
 
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const [deletingId, setDeletingId] = useState(null)
+  const deletingRef = useRef(false)
 
   const search = searchParams.get('search') ?? ''
   const roomFilter = searchParams.get('room') ?? 'all'
@@ -53,22 +60,39 @@ export default function BookingsPage() {
     }, { replace: true })
   }
 
-  function handleCancel(booking) {
+  // Асинхронне видалення бронювання
+  async function handleCancel(booking) {
+    if (deletingRef.current) return
+
     const confirmed = window.confirm(
       `Ви впевнені, що хочете скасувати бронювання гостя "${booking.guestName}"?`
     )
 
     if (!confirmed) return
 
-    const result = deleteBooking(booking.id)
+    deletingRef.current = true
+    setDeletingId(booking.id)
 
-    if (!result.success) {
+    try {
+      const result = await deleteBooking(booking.id)
+
+      if (!result.success) {
+        window.alert(
+          result.error || 'Не вдалося скасувати бронювання.'
+        )
+      }
+    } catch (deleteError) {
       window.alert(
-        result.error || 'Не вдалося скасувати бронювання.'
+        deleteError?.message ||
+        'Сталася помилка під час видалення.'
       )
+    } finally {
+      deletingRef.current = false
+      setDeletingId(null)
     }
   }
 
+  // Пошук, фільтрація та сортування підтверджених даних
   const filteredBookings = bookings
     .filter((booking) =>
       (booking.guestName ?? '')
@@ -109,7 +133,7 @@ export default function BookingsPage() {
         )
       }
 
-      // Новіші записи показуємо першими
+      // Новіші бронювання показуємо першими
       return bookings.indexOf(b) - bookings.indexOf(a)
     })
 
@@ -172,7 +196,10 @@ export default function BookingsPage() {
             <option value="all">Усі категорії</option>
 
             {rooms.map((room) => (
-              <option key={room.id} value={String(room.id)}>
+              <option
+                key={room.id}
+                value={String(room.id)}
+              >
                 {room.name}
               </option>
             ))}
@@ -204,22 +231,47 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      <p>
-        Знайдено бронювань: <strong>{filteredBookings.length}</strong>
-      </p>
+      {!loading && !error && (
+        <p>
+          Знайдено бронювань:{' '}
+          <strong>{filteredBookings.length}</strong>
+        </p>
+      )}
 
-      {bookings.length === 0 ? (
+      {loading ? (
+        <div role="status">
+          <p>Завантажуємо бронювання...</p>
+        </div>
+      ) : error ? (
+        <div role="alert">
+          <h3>Не вдалося завантажити бронювання</h3>
+          <p>{error}</p>
+
+          <button
+            type="button"
+            onClick={retry}
+          >
+            Спробувати ще раз
+          </button>
+        </div>
+      ) : bookings.length === 0 ? (
         <div>
           <h3>У вас поки немає бронювань</h3>
           <p>
-            Оберіть номер і заплануйте свій наступний відпочинок.
+            Оберіть номер і заплануйте свій
+            наступний відпочинок.
           </p>
-          <Link to="/rooms">Переглянути номери</Link>
+
+          <Link to="/rooms">
+            Переглянути номери
+          </Link>
         </div>
       ) : filteredBookings.length === 0 ? (
         <div>
           <h3>Нічого не знайдено</h3>
-          <p>Спробуйте змінити параметри пошуку.</p>
+          <p>
+            Спробуйте змінити параметри пошуку.
+          </p>
 
           <button
             type="button"
@@ -242,7 +294,8 @@ export default function BookingsPage() {
                 </h2>
 
                 <p>
-                  <strong>Гість:</strong> {booking.guestName}
+                  <strong>Гість:</strong>{' '}
+                  {booking.guestName}
                 </p>
 
                 <p>
@@ -272,8 +325,11 @@ export default function BookingsPage() {
                   <button
                     type="button"
                     onClick={() => handleCancel(booking)}
+                    disabled={deletingId !== null}
                   >
-                    Скасувати бронювання
+                    {deletingId === booking.id
+                      ? 'Скасовуємо...'
+                      : 'Скасувати бронювання'}
                   </button>
                 </div>
               </li>

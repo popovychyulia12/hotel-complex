@@ -11,6 +11,7 @@ import BookingsPage from './pages/BookingsPage.jsx'
 import BookingCreatePage from './pages/BookingCreatePage.jsx'
 import BookingEditPage from './pages/BookingEditPage.jsx'
 import BookingDetailsPage from './pages/BookingDetailsPage.jsx'
+import GetByIdTest from './tests/GetByIdTest.jsx'
 
 import RestaurantPage from './pages/RestaurantPage.jsx'
 import RestaurantMenuPage from './pages/RestaurantMenuPage.jsx'
@@ -89,6 +90,11 @@ export default function App() {
             path="about"
             element={<AboutPage />}
           />
+
+<Route
+  path="test-get-by-id"
+  element={<GetByIdTest />}
+/>
 
           <Route path="bookings" element={<BookingsLayout />}>
             <Route index element={<BookingsPage />} />

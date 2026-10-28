@@ -10,7 +10,9 @@ export default function BookingCreatePage() {
   const navigate = useNavigate()
 
   const { clearSelection } = useRoomSelection()
-  const { createBooking } = useBookings()
+  const {
+  createBooking
+} = useBookings()
 
   const roomId = searchParams.get('roomId')
 
@@ -33,7 +35,7 @@ export default function BookingCreatePage() {
     navigate('/rooms')
   }
 
-  function handleSave(draft) {
+  async function handleSave(draft) {
     if (!room) {
       return {
         success: false,
@@ -41,7 +43,7 @@ export default function BookingCreatePage() {
       }
     }
 
-    const result = createBooking({
+    const result = await createBooking({
       ...draft,
       roomId: room.id,
       roomName: room.name,
@@ -83,7 +85,11 @@ export default function BookingCreatePage() {
     )
   }
 
-  return (
+  
+return (
+  <>
+   
+
     <BookingPage
       key={`${room.id}-${selectedNights ?? 'default'}`}
       room={room}
@@ -93,5 +99,7 @@ export default function BookingCreatePage() {
       onCancel={handleCancel}
       cancelLabel="Повернутися до номерів"
     />
-  )
+  </>
+)
 }
+

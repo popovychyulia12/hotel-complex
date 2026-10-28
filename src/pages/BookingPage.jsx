@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { useBookings } from '../contexts/BookingsContext.jsx'
 import Section from '../components/ui/Section.jsx'
@@ -108,6 +108,9 @@ export default function BookingPage({
 
   const [errors, setErrors] = useState({})
   const [message, setMessage] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
+  const savingRef = useRef(false)
 
   const pageTitle = room
     ? `${title}: ${room.name}`
@@ -163,39 +166,50 @@ export default function BookingPage({
     setMessage('')
   }
 
-  function handleSubmit() {
-    const validationErrors = validateBooking(draft, room)
-    setErrors(validationErrors)
+  
+async function handleSubmit() {
+  if (isSaving) return
 
-    if (Object.keys(validationErrors).length > 0) {
-      setMessage('Перевірте правильність заповнення полів.')
-      return
-    }
+  const validationErrors = validateBooking(draft, room)
+  setErrors(validationErrors)
 
-    if (availableCount === 0) {
-      setMessage(
-        'На вибрані дати всі номери цієї категорії зайняті. Оберіть інші дати.'
-      )
-      return
-    }
-
-    if (!onSave) {
-      setMessage('Збереження недоступне.')
-      return
-    }
-
-    try {
-      const result = onSave(draft)
-
-      if (!result?.success) {
-        setMessage(
-          result?.error || 'Не вдалося зберегти бронювання.'
-        )
-      }
-    } catch {
-      setMessage('Сталася помилка під час збереження.')
-    }
+  if (Object.keys(validationErrors).length > 0) {
+    setMessage('Перевірте правильність заповнення полів.')
+    return
   }
+
+  if (availableCount === 0) {
+    setMessage(
+      'На вибрані дати всі номери цієї категорії зайняті. Оберіть інші дати.'
+    )
+    return
+  }
+
+  if (!onSave) {
+    setMessage('Збереження недоступне.')
+    return
+  }
+
+  setIsSaving(true)
+  setMessage('Зберігаємо бронювання...')
+
+  try {
+    const result = await onSave(draft)
+
+    if (!result?.success) {
+      setMessage(
+        result?.error || 'Не вдалося зберегти бронювання.'
+      )
+    }
+  } catch (error) {
+    setMessage(
+      error?.message || 'Сталася помилка під час збереження.'
+    )
+  } finally {
+    setIsSaving(false)
+  }
+}
+
 
   const handleCancel = onCancel ?? onClearSelection
 
@@ -219,6 +233,7 @@ export default function BookingPage({
             onFieldChange={handleFieldChange}
             onReset={resetDraft}
             onSubmit={handleSubmit}
+            isSaving={isSaving}
           />
 
           <div className="booking-availability" aria-live="polite">

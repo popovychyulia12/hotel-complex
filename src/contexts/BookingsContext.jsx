@@ -1,42 +1,23 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 
-import { bookings as initialBookings } from '../data/bookings.js'
+import { bookingsAdapter } from '../api/bookingsAdapter.js'
+
 import { rooms } from '../data/rooms.js'
 
 const BookingsContext = createContext(null)
 
-const STORAGE_KEY = 'hotel-complex-bookings'
-
-// Старі назви категорій залишаємо для сумісності
 const LEGACY_ROOM_NAMES = {
   Стандарт: 1,
 }
 
-function loadBookings() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-
-    if (saved !== null) {
-      const parsed = JSON.parse(saved)
-
-      if (Array.isArray(parsed)) {
-        return parsed
-      }
-    }
-  } catch (error) {
-    console.error('Помилка завантаження бронювань:', error)
-  }
-
-  return initialBookings
-}
-
-// Знаходимо категорію за ID або назвою
 function findRoom(booking) {
   if (booking.roomId !== undefined && booking.roomId !== '') {
     const byId = rooms.find(
@@ -57,25 +38,115 @@ function findRoom(booking) {
   )
 }
 
-// Перевіряємо, чи перетинаються дати двох бронювань
 function datesOverlap(start1, end1, start2, end2) {
   return start1 < end2 && end1 > start2
 }
 
+function countAvailable(bookings, roomId, checkIn, checkOut, excludeId = null) {
+  const room = rooms.find(
+    (item) => String(item.id) === String(roomId)
+  )
+
+  if (!room || !checkIn || !checkOut || checkIn >= checkOut) {
+    return 0
+  }
+
+  const occupied = bookings.filter((booking) => {
+    if (
+      excludeId !== null &&
+      String(booking.id) === String(excludeId)
+    ) {
+      return false
+    }
+
+    const bookedRoom = findRoom(booking)
+
+    return (
+      bookedRoom?.id === room.id &&
+      booking.checkIn &&
+      booking.checkOut &&
+      datesOverlap(
+        checkIn,
+        checkOut,
+        booking.checkIn,
+        booking.checkOut
+      )
+    )
+  }).length
+
+  return Math.max(0, room.quantity - occupied)
+}
+
 export function BookingsProvider({ children }) {
-  const [bookings, setBookings] = useState(loadBookings)
+  const [bookings, setBookings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
 
-  useEffect(() => {
+  const requestVersion = useRef(0)
+  const bookingsRef = useRef([])
+  const writeQueue = useRef(Promise.resolve())
+  const mountedRef = useRef(false)
+
+  const publishBookings = useCallback((items) => {
+    bookingsRef.current = items
+    setBookings(items)
+  }, [])
+
+  const loadBookings = useCallback(async () => {
+    const version = ++requestVersion.current
+
+    setLoading(true)
+    setError('')
+
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(bookings)
-      )
-    } catch (error) {
-      console.error('Помилка збереження бронювань:', error)
+      const result = await bookingsAdapter.getAll()
+
+      if (
+        !mountedRef.current ||
+        version !== requestVersion.current
+      ) {
+        return
+      }
+
+      if (!Array.isArray(result)) {
+        throw new Error('Некоректна відповідь джерела даних.')
+      }
+
+      publishBookings(result)
+    } catch (loadError) {
+      if (
+        mountedRef.current &&
+        version === requestVersion.current
+      ) {
+        setError(
+          loadError?.message ||
+          'Не вдалося завантажити бронювання.'
+        )
+      }
+    } finally {
+      if (
+        mountedRef.current &&
+        version === requestVersion.current
+      ) {
+        setLoading(false)
+      }
     }
-  }, [bookings])
+  }, [publishBookings])
+
+  useEffect(() => {
+    mountedRef.current = true
+    loadBookings()
+
+    return () => {
+      mountedRef.current = false
+      requestVersion.current += 1
+    }
+  }, [loadBookings])
+
+  const retry = useCallback(() => {
+    loadBookings()
+  }, [loadBookings])
 
   function getBookingById(id) {
     return bookings.find(
@@ -83,47 +154,17 @@ export function BookingsProvider({ children }) {
     )
   }
 
-  // Рахуємо вільні номери на вибрані дати
   function getAvailableRooms(roomId, checkIn, checkOut, excludeId = null) {
-    const room = rooms.find(
-      (item) => String(item.id) === String(roomId)
+    return countAvailable(
+      bookings,
+      roomId,
+      checkIn,
+      checkOut,
+      excludeId
     )
-
-    if (!room || !checkIn || !checkOut || checkIn >= checkOut) {
-      return 0
-    }
-
-    const occupied = bookings.filter((booking) => {
-      if (
-        excludeId !== null &&
-        String(booking.id) === String(excludeId)
-      ) {
-        return false
-      }
-
-      const bookedRoom = findRoom(booking)
-
-      if (!bookedRoom || bookedRoom.id !== room.id) {
-        return false
-      }
-
-      if (!booking.checkIn || !booking.checkOut) {
-        return false
-      }
-
-      return datesOverlap(
-        checkIn,
-        checkOut,
-        booking.checkIn,
-        booking.checkOut
-      )
-    }).length
-
-    return Math.max(0, room.quantity - occupied)
   }
 
-  // Перевірка перед створенням або редагуванням
-  function validateAvailability(data, excludeId = null) {
+  function validateAvailability(data, excludeId = null, collection = bookingsRef.current) {
     const room = findRoom(data)
 
     if (!room) {
@@ -144,7 +185,8 @@ export function BookingsProvider({ children }) {
       }
     }
 
-    const available = getAvailableRooms(
+    const available = countAvailable(
+      collection,
       room.id,
       data.checkIn,
       data.checkOut,
@@ -159,108 +201,186 @@ export function BookingsProvider({ children }) {
       }
     }
 
-    return { success: true }
+    return { success: true, room }
+  }
+
+  function enqueueWrite(operation) {
+    const result = writeQueue.current.then(operation)
+
+    writeQueue.current = result.catch(() => {})
+
+    return result
   }
 
   function createBooking(data) {
-    const validation = validateAvailability(data)
+    return enqueueWrite(async () => {
+      if (loading || error) {
+        return {
+          success: false,
+          error: 'Дані ще не готові. Повторіть спробу після завантаження.',
+        }
+      }
 
-    if (!validation.success) {
-      return validation
-    }
+      const validation = validateAvailability(data)
 
-    const room = findRoom(data)
+      if (!validation.success) {
+        return validation
+      }
 
-    const newBooking = {
-      ...data,
-      roomId: room.id,
-      roomName: room.name,
-      id: crypto.randomUUID(),
-    }
+      const room = validation.room
 
-    setBookings((previous) => [
-      ...previous,
-      newBooking,
-    ])
+      try {
+        const created = await bookingsAdapter.create({
+          ...data,
+          roomId: room.id,
+          roomName: room.name,
+        })
 
-    setNotice('Бронювання успішно створено!')
+        // Старі запити читання більше не можуть перезаписати колекцію
+        requestVersion.current += 1
 
-    return {
-      success: true,
-      booking: newBooking,
-    }
+        publishBookings([
+          ...bookingsRef.current,
+          created,
+        ])
+
+        setLoading(false)
+        setNotice('Бронювання успішно створено!')
+
+        return { success: true, booking: created }
+      } catch (saveError) {
+        return {
+          success: false,
+          error:
+            saveError?.message ||
+            'Не вдалося створити бронювання.',
+        }
+      }
+    })
   }
 
   function updateBooking(id, data) {
-    const existing = getBookingById(id)
-
-    if (!existing) {
-      return {
-        success: false,
-        error: 'Бронювання не знайдено.',
+    return enqueueWrite(async () => {
+      if (loading || error) {
+        return {
+          success: false,
+          error: 'Дані ще не готові. Повторіть спробу після завантаження.',
+        }
       }
-    }
 
-    const updated = {
-      ...existing,
-      ...data,
-      id: existing.id,
-    }
-
-    const validation = validateAvailability(updated, id)
-
-    if (!validation.success) {
-      return validation
-    }
-
-    const room = findRoom(updated)
-
-    updated.roomId = room.id
-    updated.roomName = room.name
-
-    setBookings((previous) =>
-      previous.map((booking) =>
-        String(booking.id) === String(id)
-          ? updated
-          : booking
+      const existing = bookingsRef.current.find(
+        (booking) => String(booking.id) === String(id)
       )
-    )
 
-    setNotice('Бронювання успішно оновлено!')
+      if (!existing) {
+        return {
+          success: false,
+          error: 'Бронювання не знайдено.',
+        }
+      }
 
-    return {
-      success: true,
-      booking: updated,
-    }
+      const updatedData = {
+        ...existing,
+        ...data,
+        id: existing.id,
+      }
+
+      const validation = validateAvailability(
+        updatedData,
+        id
+      )
+
+      if (!validation.success) {
+        return validation
+      }
+
+      const room = validation.room
+
+      try {
+        const updated = await bookingsAdapter.update(id, {
+          ...updatedData,
+          roomId: room.id,
+          roomName: room.name,
+        })
+
+        requestVersion.current += 1
+
+        publishBookings(
+          bookingsRef.current.map((booking) =>
+            String(booking.id) === String(id)
+              ? updated
+              : booking
+          )
+        )
+
+        setLoading(false)
+        setNotice('Бронювання успішно оновлено!')
+
+        return { success: true, booking: updated }
+      } catch (saveError) {
+        return {
+          success: false,
+          error:
+            saveError?.message ||
+            'Не вдалося оновити бронювання.',
+        }
+      }
+    })
   }
 
   function deleteBooking(id) {
-    const existing = getBookingById(id)
-
-    if (!existing) {
-      return {
-        success: false,
-        error: 'Бронювання не знайдено.',
+    return enqueueWrite(async () => {
+      if (loading || error) {
+        return {
+          success: false,
+          error: 'Дані ще не готові. Повторіть спробу після завантаження.',
+        }
       }
-    }
 
-    setBookings((previous) =>
-      previous.filter(
-        (booking) => String(booking.id) !== String(id)
+      const existing = bookingsRef.current.find(
+        (booking) => String(booking.id) === String(id)
       )
-    )
 
-    setNotice('Бронювання успішно видалено!')
+      if (!existing) {
+        return {
+          success: false,
+          error: 'Бронювання не знайдено.',
+        }
+      }
 
-    return {
-      success: true,
-    }
+      try {
+        await bookingsAdapter.delete(id)
+
+        requestVersion.current += 1
+
+        publishBookings(
+          bookingsRef.current.filter(
+            (booking) => String(booking.id) !== String(id)
+          )
+        )
+
+        setLoading(false)
+        setNotice('Бронювання успішно видалено!')
+
+        return { success: true }
+      } catch (deleteError) {
+        return {
+          success: false,
+          error:
+            deleteError?.message ||
+            'Не вдалося видалити бронювання.',
+        }
+      }
+    })
   }
 
   return (
     <BookingsContext.Provider
       value={{
         bookings,
+        loading,
+        error,
+        retry,
         notice,
         setNotice,
         getBookingById,

@@ -2,10 +2,13 @@
 import { Link, useNavigate, useParams } from 'react-router'
 import { useBookings } from '../contexts/BookingsContext.jsx'
 import { rooms } from '../data/rooms.js'
+import { useRef, useState } from 'react'
 
 export default function BookingDetailsPage() {
   const { bookingId } = useParams()
   const navigate = useNavigate()
+  const [isDeleting, setIsDeleting] = useState(false)
+const deletingRef = useRef(false)
 
   const { getBookingById, deleteBooking } = useBookings()
 
@@ -37,14 +40,21 @@ export default function BookingDetailsPage() {
   const totalPrice =
     room && nights > 0 ? room.price * nights : null
 
-  function handleCancelBooking() {
-    const confirmed = window.confirm(
-      'Ви впевнені, що хочете скасувати це бронювання?'
-    )
+  
+async function handleCancelBooking() {
+  if (deletingRef.current) return
 
-    if (!confirmed) return
+  const confirmed = window.confirm(
+    'Ви впевнені, що хочете скасувати це бронювання?'
+  )
 
-    const result = deleteBooking(booking.id)
+  if (!confirmed) return
+
+  deletingRef.current = true
+  setIsDeleting(true)
+
+  try {
+    const result = await deleteBooking(booking.id)
 
     if (result.success) {
       navigate('/bookings')
@@ -53,7 +63,15 @@ export default function BookingDetailsPage() {
         result.error || 'Не вдалося скасувати бронювання.'
       )
     }
+  } catch (error) {
+    window.alert(
+      error?.message || 'Сталася помилка під час видалення.'
+    )
+  } finally {
+    deletingRef.current = false
+    setIsDeleting(false)
   }
+}
 
   return (
     <section className="booking-details">
@@ -115,11 +133,12 @@ export default function BookingDetailsPage() {
         </Link>
 
         <button
-          type="button"
-          onClick={handleCancelBooking}
-        >
-          Скасувати бронювання
-        </button>
+  type="button"
+  onClick={handleCancelBooking}
+  disabled={isDeleting}
+>
+  {isDeleting ? 'Скасовуємо...' : 'Скасувати бронювання'}
+</button>
       </div>
     </section>
   )

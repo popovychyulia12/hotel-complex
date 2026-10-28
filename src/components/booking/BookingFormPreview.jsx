@@ -10,6 +10,7 @@ export default function BookingFormPreview({
   onReset,
   onSubmit,
   errors = {},
+  isSaving = false,
 }) {
   const fieldId = (name) => `${idPrefix}-${name}`
 
@@ -120,15 +121,25 @@ export default function BookingFormPreview({
         Потрібна допомога адміністратора
       </label>
 
-      <div className="form-actions">
-        <AppButton variant="secondary" onClick={onReset}>
-          Очистити форму
-        </AppButton>
+      
+<div className="form-actions">
+  <AppButton
+    type="button"
+    variant="secondary"
+    onClick={onReset}
+    disabled={isSaving}
+  >
+    Очистити форму
+  </AppButton>
 
-        <AppButton type="submit">
-          Зберегти бронювання
-        </AppButton>
-      </div>
+  <AppButton
+    type="submit"
+    disabled={isSaving}
+  >
+    {isSaving ? 'Зберігаємо...' : 'Зберегти бронювання'}
+  </AppButton>
+</div>
+
     </form>
   )
 }
