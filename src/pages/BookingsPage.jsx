@@ -1,7 +1,7 @@
 
 import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { useBookings } from '../contexts/BookingsContext.jsx'
+import { useBookings } from '../contexts/useBookings.js'
 import { rooms } from '../data/rooms.js'
 import Section from '../components/ui/Section.jsx'
 

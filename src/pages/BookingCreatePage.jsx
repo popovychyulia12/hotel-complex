@@ -1,7 +1,7 @@
 
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { rooms } from '../data/rooms.js'
-import { useBookings } from '../contexts/BookingsContext.jsx'
+import { useBookings } from '../contexts/useBookings.js'
 import BookingPage from './BookingPage.jsx'
 import useRoomSelection from '../hooks/useRoomSelection.js'
 

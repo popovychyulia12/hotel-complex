@@ -1,18 +1,16 @@
-
+import { datesOverlap } from '../utils/bookingLogic.js'
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
 } from 'react'
 
+import { BookingsContext } from './BookingsContextValue.js'
+
 import { bookingsAdapter } from '../api/bookingsAdapter.js'
 
 import { rooms } from '../data/rooms.js'
-
-const BookingsContext = createContext(null)
 
 const LEGACY_ROOM_NAMES = {
   Стандарт: 1,
@@ -36,10 +34,6 @@ function findRoom(booking) {
   return rooms.find(
     (room) => room.name === booking.roomName
   )
-}
-
-function datesOverlap(start1, end1, start2, end2) {
-  return start1 < end2 && end1 > start2
 }
 
 function countAvailable(bookings, roomId, checkIn, checkOut, excludeId = null) {
@@ -135,14 +129,22 @@ export function BookingsProvider({ children }) {
   }, [publishBookings])
 
   useEffect(() => {
-    mountedRef.current = true
-    loadBookings()
+  mountedRef.current = true
 
-    return () => {
-      mountedRef.current = false
-      requestVersion.current += 1
+  const controller = new AbortController()
+
+  Promise.resolve().then(() => {
+    if (!controller.signal.aborted) {
+      loadBookings()
     }
-  }, [loadBookings])
+  })
+
+  return () => {
+    controller.abort()
+    mountedRef.current = false
+    requestVersion.current += 1
+  }
+}, [loadBookings])
 
   const retry = useCallback(() => {
     loadBookings()
@@ -393,16 +395,4 @@ export function BookingsProvider({ children }) {
       {children}
     </BookingsContext.Provider>
   )
-}
-
-export function useBookings() {
-  const context = useContext(BookingsContext)
-
-  if (!context) {
-    throw new Error(
-      'useBookings потрібно використовувати всередині BookingsProvider'
-    )
-  }
-
-  return context
 }

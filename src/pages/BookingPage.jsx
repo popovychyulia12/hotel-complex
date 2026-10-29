@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { useBookings } from '../contexts/BookingsContext.jsx'
+import { useBookings } from '../contexts/useBookings.js'
 import Section from '../components/ui/Section.jsx'
 import EmptyState from '../components/ui/EmptyState.jsx'
 import BookingFormPreview from '../components/booking/BookingFormPreview.jsx'
@@ -167,8 +167,9 @@ export default function BookingPage({
   }
 
   
+
 async function handleSubmit() {
-  if (isSaving) return
+  if (savingRef.current) return
 
   const validationErrors = validateBooking(draft, room)
   setErrors(validationErrors)
@@ -190,6 +191,7 @@ async function handleSubmit() {
     return
   }
 
+  savingRef.current = true
   setIsSaving(true)
   setMessage('Зберігаємо бронювання...')
 
@@ -206,6 +208,7 @@ async function handleSubmit() {
       error?.message || 'Сталася помилка під час збереження.'
     )
   } finally {
+    savingRef.current = false
     setIsSaving(false)
   }
 }

@@ -132,12 +132,9 @@ export default function BookingFormPreview({
     Очистити форму
   </AppButton>
 
-  <AppButton
-    type="submit"
-    disabled={isSaving}
-  >
-    {isSaving ? 'Зберігаємо...' : 'Зберегти бронювання'}
-  </AppButton>
+  <AppButton type="submit" disabled={isSaving}>
+  {isSaving ? 'Зберігаємо...' : 'Зберегти бронювання'}
+</AppButton>
 </div>
 
     </form>

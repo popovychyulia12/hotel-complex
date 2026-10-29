@@ -1,6 +1,6 @@
 
 import { Link, useNavigate, useParams } from 'react-router'
-import { useBookings } from '../contexts/BookingsContext.jsx'
+import { useBookings } from '../contexts/useBookings.js'
 import { rooms } from '../data/rooms.js'
 import { useRef, useState } from 'react'
 

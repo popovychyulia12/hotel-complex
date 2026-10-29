@@ -1,6 +1,6 @@
 
 import { useRef, useState } from 'react'
-import { useBookings } from '../contexts/BookingsContext.jsx'
+import { useBookings } from '../contexts/useBookings.js'
 import { bookingsAdapter } from '../api/bookingsAdapter.js'
 
 export default function GetByIdTest() {
