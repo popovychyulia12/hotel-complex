@@ -1,225 +1,351 @@
 
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import './AboutPage.css'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const images = {
+  hero: '/hotel-hero.png.png',
+  interior: '/menu/ресторан 1.jpg',
+  room: '/rooms/Президентський 2.webp',
+  restaurant: '/menu/ресторан 2.jpg',
+  pool: '/spaprogram/карпатська гармонія.jpg',
+}
 
 const gallery = [
   {
-    id: 1,
-    image:
-      'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Затишний відпочинок серед природи',
+    id: '01',
+    image: images.interior,
+    title: 'Архітектура та атмосфера',
+    label: 'КОМПЛЕКС',
+    to: '/about',
   },
   {
-    id: 2,
-    image:
-      'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Будиночок серед гірської природи',
+    id: '02',
+    image: images.room,
+    title: 'Комфорт у деталях',
+    label: 'НОМЕРИ',
+    to: '/rooms',
   },
   {
-    id: 3,
-    image:
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Гірські краєвиди Карпат',
+    id: '03',
+    image: images.restaurant,
+    title: 'Смак особливих моментів',
+    label: 'РЕСТОРАН',
+    to: '/restaurant',
   },
   {
-    id: 4,
-    image:
-      'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Атмосфера готельного комплексу',
+    id: '04',
+    image: images.pool,
+    title: 'Час для відновлення',
+    label: 'ВІДПОЧИНОК',
+    to: '/spa',
   },
 ]
 
 const advantages = [
   {
     number: '01',
-    title: 'Природа Карпат',
+    title: 'Продуманий комфорт',
     description:
-      'Мальовничі краєвиди, свіже гірське повітря та атмосфера спокою.',
+      'Затишні номери, сучасний дизайн та увага до кожної деталі.',
+    to: '/rooms',
   },
   {
     number: '02',
-    title: 'Комфортне проживання',
+    title: 'SPA & Wellness',
     description:
-      'Різноманітні категорії номерів для романтичних подорожей, сімейного та індивідуального відпочинку.',
+      'Простір, у якому можна сповільнитися, відновити сили й приділити час собі.',
+    to: '/spa',
   },
   {
     number: '03',
-    title: 'Відпочинок для душі',
+    title: 'Гастрономія',
     description:
-      'SPA-простір, ресторан та можливості для відновлення сил.',
+      'Ресторан для неспішних сніданків, особливих вечорів і приємних зустрічей.',
+    to: '/restaurant',
   },
   {
     number: '04',
-    title: 'Особливі враження',
+    title: 'Атмосфера',
     description:
-      'Затишна атмосфера, смачна кухня та незабутні моменти серед гір.',
+      'Місце для відпочинку, теплих розмов і моментів, до яких хочеться повертатися.',
+    to: '#about-gallery',
   },
 ]
 
+const exploreLinks = [
+  { title: 'Номери', to: '/rooms' },
+  { title: 'Ресторан', to: '/restaurant' },
+  { title: 'SPA & Wellness', to: '/spa' },
+]
+
+function Benefit({ item }) {
+  const content = (
+    <>
+      <span className="lux-about-benefit-index">
+        {item.number}
+      </span>
+
+      <div>
+        <h3>{item.title}</h3>
+        <p>{item.description}</p>
+      </div>
+
+      <ArrowUpRight size={23} aria-hidden="true" />
+    </>
+  )
+
+  const className = 'lux-about-benefit lux-about-reveal'
+
+  return item.to.startsWith('#') ? (
+    <a href={item.to} className={className}>
+      {content}
+    </a>
+  ) : (
+    <Link to={item.to} className={className}>
+      {content}
+    </Link>
+  )
+}
+
 export default function AboutPage() {
+  const pageRef = useRef(null)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
+
+    const context = gsap.context(() => {
+      gsap.utils.toArray('.lux-about-reveal').forEach((element) => {
+        gsap.fromTo(
+          element,
+          { autoAlpha: 0, y: 35 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 90%',
+              once: true,
+            },
+          }
+        )
+      })
+    }, pageRef)
+
+    return () => context.revert()
+  }, [])
+
   return (
-    <div className="about-page">
-      <section className="about-hero">
-        <img
-          src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&auto=format&fit=crop&q=90"
-          alt="Мальовничі гори Карпат"
-        />
+    <div className="lux-about" ref={pageRef}>
 
-        <div className="about-hero-content">
-          <span className="about-eyebrow">
-            МІСЦЕ, ДЕ ПОЧИНАЄТЬСЯ ВІДПОЧИНОК
-          </span>
-
-          <h1>Про наш комплекс</h1>
-
-          <p>
-            Відчуйте гармонію природи, затишку
-            та справжньої карпатської гостинності.
-          </p>
-        </div>
-      </section>
-
-      <section className="about-story">
-        <div className="about-story-image">
+      {/* HERO */}
+      <section className="lux-about-hero-section">
+        <div className="lux-about-hero">
           <img
-            src="https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=1200&auto=format&fit=crop&q=85"
-            alt="Відпочинок серед природи"
-            loading="lazy"
+            className="lux-about-hero-photo"
+            src={images.hero}
+            alt="HOTEL & WELLNESS — готельний комплекс"
+            fetchPriority="high"
+            decoding="async"
           />
-        </div>
 
-        <div className="about-story-content">
-          <span className="about-eyebrow">
-            НАША ІСТОРІЯ
-          </span>
+          <div className="lux-about-hero-shade" />
 
-          <h2>Місце, створене для особливих моментів</h2>
+          <div className="lux-about-hero-content">
+            <span className="lux-about-overline lux-about-overline-light">
+              HOTEL & WELLNESS / НАША ІСТОРІЯ
+            </span>
 
-          <p>
-            Наш готельний комплекс — це простір,
-            у якому сучасний комфорт поєднується
-            з природною красою Карпат.
-          </p>
+            <h1>
+              БІЛЬШЕ,
+              <br />
+              <span>НІЖ ГОТЕЛЬ.</span>
+            </h1>
 
-          <p>
-            Ми прагнемо створити атмосферу, де можна
-            забути про щоденні турботи, відновити сили
-            та провести незабутній час із близькими.
-          </p>
+            <div className="lux-about-hero-foot">
+              <p>
+                Простір, де кожна деталь створена
+                для вашого комфорту.
+              </p>
 
-          <p>
-            Тут кожен знайде свій ідеальний відпочинок:
-            від спокійного ранку з кавою та видом на гори
-            до насиченого дня, сповненого нових вражень.
-          </p>
-        </div>
-      </section>
-
-      <section className="about-philosophy">
-        <span className="about-eyebrow">
-          НАША ФІЛОСОФІЯ
-        </span>
-
-        <h2>
-          Відпочинок — це мистецтво
-          насолоджуватися моментом
-        </h2>
-
-        <p>
-          Ми віримо, що справжній відпочинок
-          починається там, де панують спокій,
-          гармонія та турбота про кожну деталь.
-        </p>
-      </section>
-
-      <section className="about-gallery-section">
-        <div className="about-section-heading">
-          <span className="about-eyebrow">
-            АТМОСФЕРА НАШОГО КОМПЛЕКСУ
-          </span>
-
-          <h2>Місце, куди хочеться повертатися</h2>
-
-          <p>
-            Природа, затишок і краса кожної миті.
-          </p>
-        </div>
-
-        <div className="about-gallery">
-          {gallery.map((photo) => (
-            <div
-              className="about-gallery-item"
-              key={photo.id}
-            >
-              <img
-                src={photo.image}
-                alt={photo.alt}
-                loading="lazy"
-              />
+              <a
+                href="#about-story"
+                className="lux-about-circle"
+                aria-label="Дізнатися більше"
+              >
+                <ArrowDown size={25} />
+              </a>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="about-advantages-section">
-        <div className="about-section-heading">
-          <span className="about-eyebrow">
-            ЧОМУ ОБИРАЮТЬ НАС
-          </span>
-
-          <h2>Усе для незабутнього відпочинку</h2>
-        </div>
-
-        <div className="about-advantages-grid">
-          {advantages.map((advantage) => (
-            <article
-              className="about-advantage-card"
-              key={advantage.number}
-            >
-              <span>{advantage.number}</span>
-              <h3>{advantage.title}</h3>
-              <p>{advantage.description}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="about-explore">
-        <div className="about-explore-content">
-          <span className="about-eyebrow">
-            ВІДКРИЙТЕ БІЛЬШЕ
-          </span>
-
-          <h2>Створіть свою історію відпочинку</h2>
-
-          <p>
-            Затишні номери, вишукана кухня,
-            SPA та мальовничі Карпати —
-            усе для ваших особливих моментів.
-          </p>
-
-          <div className="about-explore-links">
-            <Link to="/rooms">Наші номери</Link>
-            <Link to="/restaurant">Ресторан</Link>
-            <Link to="/spa">SPA & Wellness</Link>
           </div>
         </div>
       </section>
 
-      <section className="about-cta">
-        <span className="about-eyebrow">
-          ВАША ПОДОРОЖ ПОЧИНАЄТЬСЯ ТУТ
-        </span>
+      {/* STORY */}
+      <section className="lux-about-story" id="about-story">
+        <div className="lux-about-story-copy lux-about-reveal">
+          <span className="lux-about-overline">
+            01 / ЗНАЙОМСТВО
+          </span>
 
-        <h2>Подаруйте собі незабутній відпочинок</h2>
+          <h2>
+            Тут починаються
+            <em> особливі моменти.</em>
+          </h2>
 
-        <p>
-          Оберіть ідеальний номер та насолоджуйтеся
-          атмосферою Карпат.
-        </p>
+          <p>
+            HOTEL & WELLNESS — це поєднання сучасної
+            архітектури, продуманого сервісу та атмосфери,
+            у якій легко відпочити від щоденного ритму.
+          </p>
 
-        <Link to="/rooms" className="about-cta-button">
-          Обрати номер
-        </Link>
+          <p>
+            Ми створюємо простір для різних історій:
+            неспішних вихідних удвох, зустрічей із близькими,
+            відновлення сил та нових вражень.
+          </p>
+
+          <Link to="/rooms" className="lux-about-text-link">
+            Відкрити наші номери
+            <ArrowUpRight size={19} />
+          </Link>
+        </div>
+
+        <div className="lux-about-story-visual lux-about-reveal">
+          <img
+            src={images.interior}
+            alt="Сучасний готельний інтер’єр"
+            loading="lazy"
+            decoding="async"
+          />
+          <span>THE ART OF STAYING</span>
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section
+        className="lux-about-gallery-section"
+        id="about-gallery"
+      >
+        <div className="lux-about-section-heading lux-about-reveal">
+          <div>
+            <span className="lux-about-overline">
+              02 / АТМОСФЕРА
+            </span>
+
+            <h2>
+              Кожен простір —
+              <br />
+              <em>частина вражень.</em>
+            </h2>
+          </div>
+
+          <p>
+            Деталі, з яких складається ваш відпочинок:
+            від затишного номера до вечора в ресторані.
+          </p>
+        </div>
+
+        <div className="lux-about-gallery">
+          {gallery.map((item) => (
+            <Link
+              key={item.id}
+              to={item.to}
+              className={`lux-about-gallery-card lux-about-gallery-card-${item.id}`}
+              aria-label={item.title}
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                loading="lazy"
+                decoding="async"
+              />
+
+              <div className="lux-about-gallery-overlay" />
+
+              <span className="lux-about-gallery-number">
+                {item.id} / 04
+              </span>
+
+              <div className="lux-about-gallery-caption">
+                <div>
+                  <small>{item.label}</small>
+                  <h3>{item.title}</h3>
+                </div>
+
+                <span className="lux-about-gallery-icon">
+                  <ArrowUpRight size={22} />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* ADVANTAGES */}
+      <section className="lux-about-benefits">
+        <div className="lux-about-section-heading lux-about-reveal">
+          <div>
+            <span className="lux-about-overline">
+              03 / ЩО НАС ВИРІЗНЯЄ
+            </span>
+
+            <h2>
+              Усе, що потрібно,
+              <br />
+              <em>в одному місці.</em>
+            </h2>
+          </div>
+        </div>
+
+        <div className="lux-about-benefits-list">
+          {advantages.map((item) => (
+            <Benefit key={item.number} item={item} />
+          ))}
+        </div>
+      </section>
+
+      {/* EXPLORE */}
+      <section className="lux-about-explore">
+        <div className="lux-about-explore-photo">
+          <img
+            src={images.pool}
+            alt="Басейн та зона відпочинку"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div className="lux-about-explore-shade" />
+
+        <div className="lux-about-explore-content lux-about-reveal">
+          <span className="lux-about-overline lux-about-overline-light">
+            04 / ВІДКРИВАЙТЕ БІЛЬШЕ
+          </span>
+
+          <h2>
+            Ваш відпочинок.
+            <br />
+            <em>Ваші правила.</em>
+          </h2>
+
+          <div className="lux-about-explore-links">
+            {exploreLinks.map(({ title, to }) => (
+              <Link key={to} to={to}>
+                {title}
+                <ArrowUpRight size={19} />
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
     </div>
   )

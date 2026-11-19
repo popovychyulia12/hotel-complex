@@ -1,30 +1,32 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import {
+  ArrowLeft,
+  CalendarDays,
+  CheckCircle2,
+  AlertCircle,
+  Users,
+} from 'lucide-react'
+
 import { useBookings } from '../contexts/useBookings.js'
-import Section from '../components/ui/Section.jsx'
-import EmptyState from '../components/ui/EmptyState.jsx'
 import BookingFormPreview from '../components/booking/BookingFormPreview.jsx'
 import BookingSummary from '../components/booking/BookingSummary.jsx'
-import AppButton from '../components/ui/AppButton.jsx'
+import './BookingPage.css'
 
-function formatLocalDate(date) {
-  return [
+const formatLocalDate = (date) =>
+  [
     date.getFullYear(),
     String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0'),
   ].join('-')
-}
 
-function createPlannerDates(selectedNights) {
-  if (!Number.isInteger(selectedNights) || selectedNights < 1) {
-    return {}
-  }
+function createPlannerDates(nights) {
+  if (!Number.isInteger(nights) || nights < 1) return {}
 
   const checkIn = new Date()
   const checkOut = new Date(checkIn)
-
-  checkOut.setDate(checkOut.getDate() + selectedNights)
+  checkOut.setDate(checkOut.getDate() + nights)
 
   return {
     checkIn: formatLocalDate(checkIn),
@@ -32,22 +34,31 @@ function createPlannerDates(selectedNights) {
   }
 }
 
-function createEmptyDraft() {
-  return {
-    guestName: '',
-    phone: '',
-    checkIn: '',
-    checkOut: '',
-    guestsCount: '1',
-    comment: '',
-    needsHelp: false,
-  }
-}
+const createEmptyDraft = () => ({
+  guestName: '',
+phone: '',
+email: '',
+checkIn: '',
+  checkOut: '',
+  guestsCount: '1',
+  comment: '',
+  needsHelp: false,
+})
+
+const createDraft = (nights, initialDraft) => ({
+  ...createEmptyDraft(),
+  ...createPlannerDates(nights),
+  ...(initialDraft ?? {}),
+})
 
 function validateBooking(draft, room) {
   const errors = {}
   const guestName = draft.guestName.trim()
   const phone = draft.phone.trim()
+  const email = (draft.email ?? '').trim() 
+  const today = formatLocalDate(new Date())
+  const guests = Number(draft.guestsCount)
+  const maxGuests = Number(room?.guests)
 
   if (guestName.length < 2 || guestName.length > 60) {
     errors.guestName = 'Вкажіть ім’я від 2 до 60 символів.'
@@ -57,18 +68,20 @@ function validateBooking(draft, room) {
     errors.phone = 'Введіть телефон у форматі +380XXXXXXXXX.'
   }
 
-  const todayString = formatLocalDate(new Date())
+  if (
+  email.length > 254 ||
+  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+) {
+  errors.email = 'Введіть коректну електронну пошту.'
+}
 
-  if (!draft.checkIn || draft.checkIn < todayString) {
+  if (!draft.checkIn || draft.checkIn < today) {
     errors.checkIn = 'Оберіть дату заїзду не раніше сьогодні.'
   }
 
   if (!draft.checkOut || draft.checkOut <= draft.checkIn) {
     errors.checkOut = 'Дата виїзду має бути пізніше заїзду.'
   }
-
-  const guests = Number(draft.guestsCount)
-  const maxGuests = Number(room?.guests)
 
   if (
     !Number.isInteger(guests) ||
@@ -100,21 +113,17 @@ export default function BookingPage({
 }) {
   const { getAvailableRooms } = useBookings()
 
-  const [draft, setDraft] = useState(() => ({
-    ...createEmptyDraft(),
-    ...createPlannerDates(selectedNights),
-    ...(initialDraft ?? {}),
-  }))
-
+  const [draft, setDraft] = useState(() =>
+    createDraft(selectedNights, initialDraft)
+  )
   const [errors, setErrors] = useState({})
   const [message, setMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
-
   const savingRef = useRef(false)
 
-  const pageTitle = room
-    ? `${title}: ${room.name}`
-    : title
+  const isEditing = title === 'Редагування бронювання'
+  const pageTitle = room ? `${title}: ${room.name}` : title
+  const handleCancel = onCancel ?? onClearSelection
 
   useEffect(() => {
     const previousTitle = document.title
@@ -126,20 +135,18 @@ export default function BookingPage({
   }, [pageTitle])
 
   const datesValid =
-    Boolean(draft.checkIn) &&
-    Boolean(draft.checkOut) &&
+    Boolean(draft.checkIn && draft.checkOut) &&
     draft.checkIn >= formatLocalDate(new Date()) &&
     draft.checkOut > draft.checkIn
 
-  const availableCount =
-    room && datesValid
-      ? getAvailableRooms(
-          room.id,
-          draft.checkIn,
-          draft.checkOut,
-          bookingId
-        )
-      : null
+  const availableCount = room && datesValid
+    ? getAvailableRooms(
+        room.id,
+        draft.checkIn,
+        draft.checkOut,
+        bookingId
+      )
+    : null
 
   function handleFieldChange(name, value) {
     setDraft((previous) => ({
@@ -156,130 +163,270 @@ export default function BookingPage({
   }
 
   function resetDraft() {
-    setDraft({
-      ...createEmptyDraft(),
-      ...createPlannerDates(selectedNights),
-      ...(initialDraft ?? {}),
-    })
-
+    setDraft(createDraft(selectedNights, initialDraft))
     setErrors({})
     setMessage('')
   }
 
-  
+  async function handleSubmit() {
+    if (savingRef.current) return
 
-async function handleSubmit() {
-  if (savingRef.current) return
+    const validationErrors = validateBooking(draft, room)
+    setErrors(validationErrors)
 
-  const validationErrors = validateBooking(draft, room)
-  setErrors(validationErrors)
-
-  if (Object.keys(validationErrors).length > 0) {
-    setMessage('Перевірте правильність заповнення полів.')
-    return
-  }
-
-  if (availableCount === 0) {
-    setMessage(
-      'На вибрані дати всі номери цієї категорії зайняті. Оберіть інші дати.'
-    )
-    return
-  }
-
-  if (!onSave) {
-    setMessage('Збереження недоступне.')
-    return
-  }
-
-  savingRef.current = true
-  setIsSaving(true)
-  setMessage('Зберігаємо бронювання...')
-
-  try {
-    const result = await onSave(draft)
-
-    if (!result?.success) {
-      setMessage(
-        result?.error || 'Не вдалося зберегти бронювання.'
-      )
+    if (Object.keys(validationErrors).length) {
+      setMessage('Перевірте правильність заповнення полів.')
+      return
     }
-  } catch (error) {
-    setMessage(
-      error?.message || 'Сталася помилка під час збереження.'
-    )
-  } finally {
-    savingRef.current = false
-    setIsSaving(false)
+
+    if (availableCount === 0) {
+      setMessage(
+        'На вибрані дати всі номери цієї категорії зайняті. Оберіть інші дати.'
+      )
+      return
+    }
+
+    if (!onSave) {
+      setMessage('Збереження недоступне.')
+      return
+    }
+
+    savingRef.current = true
+    setIsSaving(true)
+    setMessage('Зберігаємо бронювання...')
+
+    try {
+      const result = await onSave(draft)
+
+      if (!result?.success) {
+        setMessage(
+          result?.error || 'Не вдалося зберегти бронювання.'
+        )
+      }
+    } catch (error) {
+      setMessage(
+        error?.message || 'Сталася помилка під час збереження.'
+      )
+    } finally {
+      savingRef.current = false
+      setIsSaving(false)
+    }
   }
-}
 
+  if (!room) {
+    return (
+      <div className="booking-page booking-empty-page">
+        <div className="booking-empty-card">
+          <span className="booking-kicker">
+            HOTEL & WELLNESS
+          </span>
 
-  const handleCancel = onCancel ?? onClearSelection
+          <h1>Номер ще не вибрано.</h1>
+
+          <p>
+            Оберіть категорію номера, щоб перейти
+            до оформлення бронювання.
+          </p>
+
+          <Link to="/rooms" className="booking-empty-link">
+            Переглянути номери
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <Section id="booking" title={title}>
-      {room ? (
-        <>
-          <p>
-            Обрана категорія: <strong>{room.name}</strong>
-          </p>
+    <div className="booking-page">
 
-          <p>
-            Усього номерів цієї категорії: <strong>{room.quantity}</strong>
-          </p>
+      {/* HERO */}
+      <section className="booking-hero">
+        <div className="booking-container">
+          <Link
+            to={isEditing ? '/bookings' : '/rooms'}
+            className="booking-back-link"
+          >
+            <ArrowLeft size={18} />
+            {isEditing
+              ? 'До моїх бронювань'
+              : 'Повернутися до номерів'}
+          </Link>
 
-          <BookingFormPreview
-            idPrefix="booking-form"
-            roomName={room.name}
-            draft={draft}
-            errors={errors}
-            onFieldChange={handleFieldChange}
-            onReset={resetDraft}
-            onSubmit={handleSubmit}
-            isSaving={isSaving}
-          />
+          <span className="booking-kicker">
+            HOTEL & WELLNESS / RESERVATION
+          </span>
 
-          <div className="booking-availability" aria-live="polite">
-            {!datesValid ? (
-              <p>
-                Оберіть коректні дати заїзду та виїзду,
-                щоб перевірити доступність.
-              </p>
-            ) : availableCount > 0 ? (
-              <p className="availability-success">
-                На вибрані дати доступно номерів: <strong>{availableCount}</strong>
-              </p>
+          <h1>
+            {isEditing ? (
+              <>
+                ЗМІНИТИ
+                <br />
+                <em>БРОНЮВАННЯ.</em>
+              </>
             ) : (
-              <p className="availability-error">
-                На вибрані дати всі номери цієї категорії зайняті.
-                Спробуйте інші дати.
-              </p>
+              <>
+                ВАШ ІДЕАЛЬНИЙ
+                <br />
+                <em>ВІДПОЧИНОК.</em>
+              </>
             )}
+          </h1>
+
+          <p>
+            Оберіть дати, заповніть свої дані та
+            підтвердьте бронювання.
+          </p>
+        </div>
+      </section>
+
+      {/* CONTENT */}
+      <section className="booking-content">
+        <div className="booking-container">
+
+          <div className="booking-section-heading">
+            <span className="booking-kicker">
+              01 / ОФОРМЛЕННЯ
+            </span>
+
+            <h2>
+              Майже все <em>готово.</em>
+            </h2>
+
+            <p>
+              Перевірте вибраний номер і заповніть форму.
+            </p>
           </div>
 
-          {message && (
-            <p role="status">{message}</p>
-          )}
+          <div className="booking-columns">
 
-          <BookingSummary
-            roomName={room.name}
-            draft={draft}
-          />
+            {/* SIDEBAR */}
+            <aside className="booking-sidebar">
+              <article className="booking-selected-room">
+                <div className="booking-selected-image">
+                  <img
+                    src={room.image}
+                    alt={`Інтер'єр номера ${room.name}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span>ОБРАНИЙ НОМЕР</span>
+                </div>
 
-          <AppButton
-            variant="secondary"
-            onClick={handleCancel}
-          >
-            {cancelLabel}
-          </AppButton>
-        </>
-      ) : (
-        <EmptyState title="Номер для бронювання не вибрано">
-          <p>
-            <Link to="/rooms">Переглянути номери</Link>
-          </p>
-        </EmptyState>
-      )}
-    </Section>
+                <div className="booking-selected-info">
+                  <span className="booking-kicker">
+                    ВАШ НОМЕР
+                  </span>
+
+                  <h3>{room.name}</h3>
+                  <p>{room.description}</p>
+
+                  <div className="booking-room-meta">
+                    <span>
+                      <Users size={17} />
+                      До {room.guests} гостей
+                    </span>
+
+                    <span>
+                      {room.quantity} номерів у категорії
+                    </span>
+                  </div>
+
+                  <div className="booking-price-line">
+                    <span>Вартість за ніч</span>
+                    <strong>
+                      {room.price.toLocaleString('uk-UA')} грн
+                    </strong>
+                  </div>
+                </div>
+              </article>
+
+              <BookingSummary
+                roomName={room.name}
+                draft={draft}
+              />
+            </aside>
+
+            {/* FORM */}
+            <div className="booking-form-panel">
+              <div className="booking-form-heading">
+                <span className="booking-kicker">
+                  02 / ОСОБИСТІ ДАНІ
+                </span>
+
+                <h2>Дані для бронювання</h2>
+
+                <p>
+                  Заповніть обов'язкові поля, позначені
+                  зірочкою.
+                </p>
+              </div>
+
+              <BookingFormPreview
+                idPrefix="booking-form"
+                roomName={room.name}
+                draft={draft}
+                errors={errors}
+                onFieldChange={handleFieldChange}
+                onReset={resetDraft}
+                onSubmit={handleSubmit}
+                isSaving={isSaving}
+                maxGuests={room.guests}
+              />
+
+              {/* AVAILABILITY */}
+              <div
+                className="booking-availability"
+                aria-live="polite"
+              >
+                {!datesValid ? (
+                  <div className="booking-availability-neutral">
+                    <CalendarDays size={21} />
+                    <p>
+                      Оберіть коректні дати заїзду та
+                      виїзду, щоб перевірити доступність.
+                    </p>
+                  </div>
+                ) : availableCount > 0 ? (
+                  <div className="booking-availability-success">
+                    <CheckCircle2 size={21} />
+                    <p>
+                      На вибрані дати доступно номерів:{' '}
+                      <strong>{availableCount}</strong>
+                    </p>
+                  </div>
+                ) : (
+                  <div className="booking-availability-error">
+                    <AlertCircle size={21} />
+                    <p>
+                      На вибрані дати всі номери цієї
+                      категорії зайняті. Спробуйте інші дати.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {message && (
+                <p className="booking-message" role="status">
+                  {message}
+                </p>
+              )}
+
+              {handleCancel && (
+                <button
+                  type="button"
+                  className="booking-cancel-link"
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                >
+                  <ArrowLeft size={17} />
+                  {cancelLabel}
+                </button>
+              )}
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }

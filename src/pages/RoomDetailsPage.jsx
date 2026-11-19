@@ -1,8 +1,22 @@
 
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Users,
+  BedDouble,
+  CalendarDays,
+  ShieldCheck,
+  Image as ImageIcon,
+} from 'lucide-react'
+
 import { rooms } from '../data/rooms.js'
 import useRoomSelection from '../hooks/useRoomSelection.js'
+import './RoomDetailsPage.css'
 
 const roomAmenities = {
   1: [
@@ -40,247 +54,369 @@ export default function RoomDetailsPage() {
   const navigate = useNavigate()
   const { selectRoom } = useRoomSelection()
 
-  // Активна фотографія галереї
   const [activeImage, setActiveImage] = useState(0)
 
-  // Шукаємо номер за його ID
   const room = rooms.find(
     (item) => String(item.id) === roomId
   )
 
-  // Якщо номера не існує
   if (!room) {
     return (
-      <section className="room-details">
-        <h1>Номер не знайдено</h1>
+      <div className="room-detail-page">
+        <section className="room-detail-not-found">
+          <span className="room-detail-kicker">
+            HOTEL & WELLNESS / ROOMS
+          </span>
 
-        <p>
-          Перевірте адресу або виберіть номер із каталогу.
-        </p>
+          <h1>Номер не знайдено.</h1>
 
-        <Link to="/rooms">
-          Повернутися до номерів
-        </Link>
-      </section>
+          <p>
+            Перевірте адресу або виберіть інший номер
+            із нашого каталогу.
+          </p>
+
+          <Link to="/rooms" className="room-detail-primary-link">
+            <ArrowLeft size={18} />
+            Повернутися до номерів
+          </Link>
+        </section>
+      </div>
     )
   }
 
   const isAvailable = room.status === 'Доступний'
   const amenities = roomAmenities[room.id] || []
 
-  // Фотографії номера
   const gallery = room.gallery?.length
     ? room.gallery
     : [room.image]
 
-  // Вибрана фотографія
   const currentImage = gallery[activeImage] || gallery[0]
 
-  // Перехід до бронювання
   function handleBooking() {
     selectRoom(room.id)
     navigate(`/bookings/new?roomId=${room.id}`)
   }
 
+  function showPreviousImage() {
+    setActiveImage((previous) =>
+      (previous - 1 + gallery.length) % gallery.length
+    )
+  }
+
+  function showNextImage() {
+    setActiveImage((previous) =>
+      (previous + 1) % gallery.length
+    )
+  }
+
+  const formattedPrice = room.price.toLocaleString('uk-UA')
+
   return (
-    <main className="room-details-page">
+    <div className="room-detail-page">
 
-      {/* Навігація */}
+      {/* HERO */}
 
-      <div className="room-details-breadcrumb">
-        <Link to="/rooms">Номери</Link>
-        <span> / </span>
-        <span>{room.name}</span>
-      </div>
-
-      {/* Заголовок номера */}
-
-      <div className="room-details-heading">
-        <div>
-          <span className="room-details-eyebrow">
-            ВАШ ІДЕАЛЬНИЙ ВІДПОЧИНОК
-          </span>
-
-          <h1>Номер «{room.name}»</h1>
-
-          <p>{room.description}</p>
-        </div>
-
-        <div className="room-details-price">
-          <strong>
-            {room.price.toLocaleString('uk-UA')} грн
-          </strong>
-
-          <span>за ніч</span>
-        </div>
-      </div>
-
-      {/* Галерея фотографій */}
-
-      <div className="room-details-gallery">
-
-        <div className="room-gallery-photos">
-
-          {/* Велика фотографія */}
-
-          <img
-            src={currentImage}
-            alt={`Фото номера ${room.name}`}
-            className="room-details-main-image"
-          />
-
-          {/* Маленькі фотографії */}
-
-          <div className="room-gallery-thumbnails">
-            {gallery.map((photo, index) => (
-              <button
-                type="button"
-                key={`${photo}-${index}`}
-                className={`room-gallery-thumbnail ${
-                  activeImage === index ? 'active' : ''
-                }`}
-                onClick={() => setActiveImage(index)}
-                aria-label={`Показати фото ${index + 1}`}
-                aria-pressed={activeImage === index}
-              >
-                <img
-                  src={photo}
-                  alt={`Мініатюра номера ${room.name}, фото ${index + 1}`}
-                />
-              </button>
-            ))}
-          </div>
-
-        </div>
-
-        {/* Текст біля галереї */}
-
-        <div className="room-details-gallery-info">
-          <span>ГОТЕЛЬНИЙ КОМПЛЕКС</span>
-
-          <h2>Комфорт у кожній деталі</h2>
-
-          <p>
-            Простір, де можна відпочити від щоденних
-            турбот, насолодитися затишком і присвятити
-            час собі та близьким.
-          </p>
-        </div>
-
-      </div>
-
-      {/* Інформація про номер */}
-
-      <div className="room-details-layout">
-
-        <div className="room-details-content">
-
-          {/* Опис */}
-
-          <section className="room-details-section">
-            <span className="room-details-eyebrow">
-              ПРО НОМЕР
-            </span>
-
-            <h2>Ваш простір для відпочинку</h2>
-
-            <p>
-              {room.description} Ми подбали про атмосферу,
-              у якій приємно починати ранок і завершувати день.
-            </p>
-
-            <div className="room-details-features">
-
-              <div>
-                <strong>{room.guests}</strong>
-                <span>Максимум гостей</span>
-              </div>
-
-              <div>
-                <strong>24/7</strong>
-                <span>Онлайн-бронювання</span>
-              </div>
-
-              <div>
-                <strong>{room.status}</strong>
-                <span>Статус номера</span>
-              </div>
-
-            </div>
-          </section>
-
-          {/* Зручності */}
-
-          <section className="room-details-section">
-            <span className="room-details-eyebrow">
-              ДЛЯ ВАШОГО КОМФОРТУ
-            </span>
-
-            <h2>Зручності номера</h2>
-
-            <ul className="room-amenities">
-              {amenities.map((amenity) => (
-                <li key={amenity}>
-                  <span className="amenity-check">
-                    ✓
-                  </span>
-
-                  {amenity}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-        </div>
-
-        {/* Блок бронювання */}
-
-        <aside className="room-details-booking">
-
-          <span className="room-details-eyebrow">
-            ПЛАНУЙТЕ СВІЙ ВІДПОЧИНОК
-          </span>
-
-          <h2>Забронюйте свій номер</h2>
-
-          <p>
-            Оберіть зручні дати та оформіть бронювання
-            за кілька хвилин.
-          </p>
-
-          <div className="room-booking-price">
-            <strong>
-              {room.price.toLocaleString('uk-UA')} грн
-            </strong>
-
-            <span>/ ніч</span>
-          </div>
-
-          {isAvailable ? (
-            <button
-              type="button"
-              className="room-details-book-button"
-              onClick={handleBooking}
-            >
-              Забронювати номер
-            </button>
-          ) : (
-            <p className="room-details-unavailable">
-              Наразі номер недоступний для бронювання.
-            </p>
-          )}
-
+      <section className="room-detail-hero">
+        <div className="room-detail-container">
           <Link
             to="/rooms"
-            className="room-details-back-link"
+            className="room-detail-back-link"
           >
-            Переглянути інші номери
+            <ArrowLeft size={18} />
+            Усі номери
           </Link>
 
-        </aside>
+          <div className="room-detail-hero-heading">
+            <div>
+              <span className="room-detail-kicker">
+                HOTEL & WELLNESS / ROOMS
+              </span>
 
-      </div>
+              <h1>
+                ВАШ ПРОСТІР
+                <br />
+                <em>ДЛЯ ВІДПОЧИНКУ.</em>
+              </h1>
 
-    </main>
+              <p>
+                Продумані деталі, затишна атмосфера
+                та комфорт, який відчувається з першої миті.
+              </p>
+            </div>
+
+            <div className="room-detail-hero-number">
+              <span>ОБРАНА КАТЕГОРІЯ</span>
+              <strong>{room.name}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ROOM INTRO */}
+
+      <section className="room-detail-intro">
+        <div className="room-detail-container">
+          <div className="room-detail-intro-heading">
+            <div>
+              <span className="room-detail-kicker">
+                01 / ВАШ НОМЕР
+              </span>
+
+              <h2>
+                Номер <em>«{room.name}»</em>
+              </h2>
+
+              <p>{room.description}</p>
+            </div>
+
+            <div className="room-detail-intro-price">
+              <span>Вартість проживання</span>
+              <strong>{formattedPrice} грн</strong>
+              <small>за одну ніч</small>
+            </div>
+          </div>
+
+          {/* GALLERY */}
+
+          <div className="room-detail-gallery">
+            <div className="room-detail-gallery-main">
+              <img
+                src={currentImage}
+                alt={`Фото номера ${room.name}`}
+                className="room-detail-main-photo"
+              />
+
+              <div className="room-detail-gallery-label">
+                <ImageIcon size={16} />
+                ФОТО НОМЕРА
+              </div>
+
+              {gallery.length > 1 && (
+                <div className="room-detail-gallery-controls">
+                  <button
+                    type="button"
+                    onClick={showPreviousImage}
+                    aria-label="Попереднє фото"
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={showNextImage}
+                    aria-label="Наступне фото"
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+                </div>
+              )}
+
+              <div className="room-detail-gallery-counter">
+                {String(
+                  Math.min(activeImage + 1, gallery.length)
+                ).padStart(2, '0')}
+                <span>/</span>
+                {String(gallery.length).padStart(2, '0')}
+              </div>
+            </div>
+
+            {gallery.length > 1 && (
+              <div className="room-detail-gallery-thumbnails">
+                {gallery.map((photo, index) => (
+                  <button
+                    type="button"
+                    key={`${photo}-${index}`}
+                    className={`room-detail-thumbnail ${
+                      activeImage === index ? 'is-active' : ''
+                    }`}
+                    onClick={() => setActiveImage(index)}
+                    aria-label={`Показати фото ${index + 1}`}
+                    aria-pressed={activeImage === index}
+                  >
+                    <img
+                      src={photo}
+                      alt={`Мініатюра номера ${room.name}, фото ${index + 1}`}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* DESCRIPTION + BOOKING */}
+
+      <section className="room-detail-content">
+        <div className="room-detail-container">
+          <div className="room-detail-layout">
+
+            {/* LEFT */}
+
+            <div className="room-detail-main-content">
+
+              <section className="room-detail-description">
+                <span className="room-detail-kicker">
+                  02 / ПРО НОМЕР
+                </span>
+
+                <h2>
+                  Комфорт у <em>кожній деталі.</em>
+                </h2>
+
+                <p>
+                  {room.description} Ми подбали про атмосферу,
+                  у якій приємно починати ранок і
+                  завершувати день.
+                </p>
+
+                <div className="room-detail-feature-grid">
+                  <div className="room-detail-feature">
+                    <span className="room-detail-feature-icon">
+                      <Users size={24} />
+                    </span>
+
+                    <strong>{room.guests}</strong>
+                    <span>Максимум гостей</span>
+                  </div>
+
+                  <div className="room-detail-feature">
+                    <span className="room-detail-feature-icon">
+                      <CalendarDays size={24} />
+                    </span>
+
+                    <strong>24/7</strong>
+                    <span>Онлайн-бронювання</span>
+                  </div>
+
+                  <div className="room-detail-feature">
+                    <span className="room-detail-feature-icon">
+                      <ShieldCheck size={24} />
+                    </span>
+
+                    <strong
+                      className="room-detail-status-text"
+                    >
+                      {room.status}
+                    </strong>
+
+                    <span>Статус номера</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* AMENITIES */}
+
+              <section className="room-detail-amenities-section">
+                <span className="room-detail-kicker">
+                  03 / ЗРУЧНОСТІ
+                </span>
+
+                <h2>
+                  Усе для вашого <em>комфорту.</em>
+                </h2>
+
+                <p>
+                  У номері передбачено все необхідне
+                  для приємного та безтурботного проживання.
+                </p>
+
+                {amenities.length > 0 ? (
+                  <ul className="room-detail-amenities">
+                    {amenities.map((amenity) => (
+                      <li key={amenity}>
+                        <span className="room-detail-amenity-icon">
+                          <Check size={17} />
+                        </span>
+
+                        {amenity}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="room-detail-amenities-empty">
+                    Детальний перелік зручностей
+                    уточнюється.
+                  </p>
+                )}
+              </section>
+            </div>
+
+            {/* BOOKING CARD */}
+
+            <aside className="room-detail-booking-card">
+              <span className="room-detail-kicker">
+                04 / БРОНЮВАННЯ
+              </span>
+
+              <h2>
+                Час планувати
+                <br />
+                <em>відпочинок.</em>
+              </h2>
+
+              <p>
+                Оберіть зручні дати та оформіть
+                бронювання всього за кілька хвилин.
+              </p>
+
+              <div className="room-detail-booking-price">
+                <span>Вартість за ніч</span>
+
+                <strong>
+                  {formattedPrice} грн
+                </strong>
+
+                <small>
+                  за одну ніч проживання
+                </small>
+              </div>
+
+              <div className="room-detail-booking-info">
+                <div>
+                  <BedDouble size={19} />
+                  <span>{room.name}</span>
+                </div>
+
+                <div>
+                  <Users size={19} />
+                  <span>До {room.guests} гостей</span>
+                </div>
+
+                <div>
+                  <ShieldCheck size={19} />
+                  <span>{room.status}</span>
+                </div>
+              </div>
+
+              {isAvailable ? (
+                <button
+                  type="button"
+                  className="room-detail-book-button"
+                  onClick={handleBooking}
+                >
+                  Забронювати номер
+                  <ArrowUpRight size={20} />
+                </button>
+              ) : (
+                <p className="room-detail-unavailable">
+                  Наразі номер недоступний
+                  для бронювання.
+                </p>
+              )}
+
+              <Link
+                to="/rooms"
+                className="room-detail-other-rooms"
+              >
+                <ArrowLeft size={17} />
+                Переглянути інші номери
+              </Link>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }

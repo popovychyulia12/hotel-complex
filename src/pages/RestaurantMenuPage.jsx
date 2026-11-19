@@ -1,6 +1,8 @@
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { ArrowLeft, ArrowUpRight, X } from 'lucide-react'
+import './RestaurantMenuPage.css'
 
 const categories = [
   'Усі страви',
@@ -12,15 +14,20 @@ const categories = [
   'Напої',
 ]
 
+// Окремі зображення для кожної позиції.
+// Для локальних фото збережи файл у public/menu/
+// і заміни URL на /menu/назва-файлу.webp.
+
 const menuItems = [
   {
     id: 1,
-    name: 'Карпатський сніданок',
+    name: 'Фірмовий сніданок',
     category: 'Сніданки',
     description: 'Яєчня, домашня ковбаса, сир, овочі та свіжий хліб.',
     weight: '350 г',
     price: 290,
-    image: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&auto=format&fit=crop&q=85',
+    image:
+      '/menu/фірмовий сніданок.webp',
   },
   {
     id: 2,
@@ -29,7 +36,8 @@ const menuItems = [
     description: 'Ніжні сирники зі сметаною, ягодами та медом.',
     weight: '250 г',
     price: 225,
-    image: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=800&auto=format&fit=crop&q=85',
+    image:
+      '/menu/сирники.jpg',
   },
   {
     id: 3,
@@ -38,7 +46,8 @@ const menuItems = [
     description: 'Повітряний омлет із сиром, зеленню та овочами.',
     weight: '280 г',
     price: 195,
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=85',
+    image:
+      '/menu/омлет з сиром.webp',
   },
   {
     id: 4,
@@ -47,16 +56,18 @@ const menuItems = [
     description: 'Підсмажений хліб, авокадо, яйце пашот та зелень.',
     weight: '240 г',
     price: 245,
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800&auto=format&fit=crop&q=85',
+    image:
+    '/menu/авокадо тост.webp'
   },
   {
     id: 5,
-    name: 'Карпатська сирна тарілка',
+    name: 'Сирна тарілка',
     category: 'Закуски',
-    description: 'Добірка локальних сирів із медом та горіхами.',
+    description: 'Добірка сирів із медом та горіхами.',
     weight: '250 г',
     price: 340,
-    image: 'https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=800&auto=format&fit=crop&q=85',
+    image:
+    '/menu/сирна тарілка.webp'
   },
   {
     id: 6,
@@ -65,7 +76,7 @@ const menuItems = [
     description: 'Свіжі сезонні овочі із зеленню та соусом.',
     weight: '300 г',
     price: 190,
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/овочева тарілка.webp'
   },
   {
     id: 7,
@@ -74,34 +85,34 @@ const menuItems = [
     description: 'Хрусткі брускети з томатами, базиліком та оливковою олією.',
     weight: '200 г',
     price: 210,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/брускети з томатами.webp'
   },
   {
     id: 8,
     name: 'Грибна закуска',
     category: 'Закуски',
-    description: 'Обсмажені лісові гриби з цибулею та ароматними травами.',
+    description: 'Обсмажені гриби з цибулею та ароматними травами.',
     weight: '220 г',
     price: 245,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/грибна закуска.webp'
   },
   {
     id: 9,
-    name: 'Карпатський бограч',
+    name: 'Бограч',
     category: 'Перші страви',
     description: 'Густий суп із м’ясом, овочами, паприкою та спеціями.',
     weight: '350 г',
     price: 285,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/бограч.webp'
   },
   {
     id: 10,
     name: 'Грибна юшка',
     category: 'Перші страви',
-    description: 'Ароматна юшка з лісових грибів і зелені.',
+    description: 'Ароматна юшка з грибів і зелені.',
     weight: '300 г',
     price: 225,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/грибна юшка.webp'
   },
   {
     id: 11,
@@ -110,7 +121,7 @@ const menuItems = [
     description: 'Традиційний борщ зі сметаною та домашнім хлібом.',
     weight: '350 г',
     price: 235,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/борщ.webp'
   },
   {
     id: 12,
@@ -119,7 +130,7 @@ const menuItems = [
     description: 'Ніжний гарбузовий суп із вершками та насінням.',
     weight: '300 г',
     price: 210,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/крем-суп.webp'
   },
   {
     id: 13,
@@ -128,7 +139,7 @@ const menuItems = [
     description: 'Кукурудзяна каша на вершках із бринзою та шкварками.',
     weight: '350 г',
     price: 265,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/банош.webp'
   },
   {
     id: 14,
@@ -137,7 +148,7 @@ const menuItems = [
     description: 'Золотисті картопляні деруни з вершково-грибним соусом.',
     weight: '300 г',
     price: 245,
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/деруни.jpg'
   },
   {
     id: 15,
@@ -146,7 +157,7 @@ const menuItems = [
     description: 'Запечена форель із лимоном, травами та овочами.',
     weight: '350 г',
     price: 425,
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/форель.webp'
   },
   {
     id: 16,
@@ -155,7 +166,7 @@ const menuItems = [
     description: 'Соковитий стейк із запеченою картоплею та соусом.',
     weight: '350 г',
     price: 590,
-    image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/стейк.webp'
   },
   {
     id: 17,
@@ -164,7 +175,7 @@ const menuItems = [
     description: 'Ніжне куряче філе на грилі із сезонними овочами.',
     weight: '320 г',
     price: 325,
-    image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/філе.webp'
   },
   {
     id: 18,
@@ -173,7 +184,7 @@ const menuItems = [
     description: 'Домашні вареники з картоплею, цибулею та сметаною.',
     weight: '300 г',
     price: 225,
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/Вареники.webp'
   },
   {
     id: 19,
@@ -182,7 +193,7 @@ const menuItems = [
     description: 'Ніжні медові коржі з вершковим кремом.',
     weight: '150 г',
     price: 175,
-    image: 'https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/медовик.webp'
   },
   {
     id: 20,
@@ -191,7 +202,7 @@ const menuItems = [
     description: 'Теплий шоколадний десерт із рідкою серединкою.',
     weight: '160 г',
     price: 210,
-    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/фондан.webp'
   },
   {
     id: 21,
@@ -200,7 +211,7 @@ const menuItems = [
     description: 'Класичний вершковий чизкейк із ягідним соусом.',
     weight: '160 г',
     price: 195,
-    image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/чизкейк.webp'
   },
   {
     id: 22,
@@ -209,7 +220,7 @@ const menuItems = [
     description: 'Тонке тісто з яблуками, корицею та ванільним соусом.',
     weight: '180 г',
     price: 185,
-    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/штрудель.webp'
   },
   {
     id: 23,
@@ -218,7 +229,7 @@ const menuItems = [
     description: 'Насичена ароматна кава.',
     weight: '30 мл',
     price: 75,
-    image: 'https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?w=800&auto=format&fit=crop&q=85',
+    image:'/menu/еспресо.webp'
   },
   {
     id: 24,
@@ -227,16 +238,16 @@ const menuItems = [
     description: 'Еспресо з молоком та ніжною молочною пінкою.',
     weight: '250 мл',
     price: 105,
-    image: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/капучино.webp'
   },
   {
     id: 25,
-    name: 'Карпатський трав’яний чай',
+    name: 'Трав’яний чай',
     category: 'Напої',
-    description: 'Ароматний чай із добірних гірських трав.',
+    description: 'Ароматний чай із добірних трав.',
     weight: '400 мл',
     price: 125,
-    image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/чай.webp'
   },
   {
     id: 26,
@@ -245,9 +256,36 @@ const menuItems = [
     description: 'Освіжаючий лимонад із лимоном, м’ятою та льодом.',
     weight: '400 мл',
     price: 135,
-    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765edfd4?w=800&auto=format&fit=crop&q=85',
+    image: '/menu/лимонад.webp'
   },
 ]
+
+function DishImage({ item }) {
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    setFailed(false)
+  }, [item.image])
+
+  if (failed) {
+    return (
+      <div className="rm-dish-photo-placeholder">
+        <span>{item.category}</span>
+        <strong>{item.name}</strong>
+      </div>
+    )
+  }
+
+  return (
+    <img
+      className="rm-dish-photo"
+      src={item.image}
+      alt={item.name}
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  )
+}
 
 export default function RestaurantMenuPage() {
   const [activeCategory, setActiveCategory] = useState('Усі страви')
@@ -260,65 +298,94 @@ export default function RestaurantMenuPage() {
           (item) => item.category === activeCategory
         )
 
+  useEffect(() => {
+    if (!selectedDish) return
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setSelectedDish(null)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
+
+    return () => {
+      window.removeEventListener('keydown', handleEscape)
+    }
+  }, [selectedDish])
+
   return (
-    <div className="restaurant-menu-page">
-      <section className="restaurant-menu-hero">
-        <span className="restaurant-eyebrow">
-          СМАК КАРПАТ
-        </span>
+    <main className="rm-page">
 
-        <h1>Меню ресторану</h1>
-
-        <p>
-          Від традиційних карпатських страв
-          до сучасних гастрономічних поєднань.
-        </p>
-
-        <Link to="/restaurant" className="menu-back-link">
-          ← Повернутися до ресторану
+      <section className="rm-header">
+        <Link to="/restaurant" className="rm-back">
+          <ArrowLeft size={18} />
+          До ресторану
         </Link>
+
+        <div className="rm-header-main">
+          <div>
+            <span className="rm-label">
+              HOTEL & WELLNESS / GASTRONOMY
+            </span>
+
+            <h1>
+              НАШЕ
+              <br />
+              <span>МЕНЮ</span>
+            </h1>
+          </div>
+
+          <p>
+            Сніданки, авторські страви, десерти
+            та напої. Обирайте те, що до смаку
+            саме вам.
+          </p>
+        </div>
       </section>
 
-      <section className="restaurant-menu-content">
-        <div className="menu-category-list">
+      <section className="rm-content">
+        <div className="rm-categories" aria-label="Категорії меню">
           {categories.map((category) => (
             <button
               type="button"
               key={category}
               className={
                 activeCategory === category
-                  ? 'menu-category-button selected'
-                  : 'menu-category-button'
+                  ? 'rm-category active'
+                  : 'rm-category'
               }
               onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
             >
               {category}
             </button>
           ))}
         </div>
 
-        <p className="menu-results-count">
-          Знайдено позицій: {filteredItems.length}
-        </p>
+        <div className="rm-results">
+          <span>ОБЕРІТЬ СВОЄ</span>
+          <span>ПОЗИЦІЙ: {filteredItems.length}</span>
+        </div>
 
-        <div className="restaurant-menu-grid">
+        <div className="rm-grid">
           {filteredItems.map((item) => (
-            <article className="menu-dish-card" key={item.id}>
+            <article className="rm-card" key={item.id}>
               <button
                 type="button"
-                className="menu-dish-image-button"
+                className="rm-card-image"
                 onClick={() => setSelectedDish(item)}
-                aria-label={`Переглянути страву ${item.name}`}
+                aria-label={`Детальніше про ${item.name}`}
               >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  loading="lazy"
-                />
+                <DishImage item={item} />
+
+                <span className="rm-card-arrow">
+                  <ArrowUpRight size={22} />
+                </span>
               </button>
 
-              <div className="menu-dish-info">
-                <span className="menu-dish-category">
+              <div className="rm-card-content">
+                <span className="rm-card-category">
                   {item.category}
                 </span>
 
@@ -326,9 +393,8 @@ export default function RestaurantMenuPage() {
 
                 <p>{item.description}</p>
 
-                <div className="menu-dish-bottom">
+                <div className="rm-card-bottom">
                   <span>{item.weight}</span>
-
                   <strong>
                     {item.price.toLocaleString('uk-UA')} грн
                   </strong>
@@ -341,44 +407,42 @@ export default function RestaurantMenuPage() {
 
       {selectedDish && (
         <div
-          className="menu-modal-backdrop"
+          className="rm-modal-backdrop"
           onClick={() => setSelectedDish(null)}
         >
           <div
-            className="menu-modal"
+            className="rm-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="menu-modal-title"
+            aria-labelledby="rm-modal-title"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
-              className="menu-modal-close"
+              className="rm-modal-close"
               onClick={() => setSelectedDish(null)}
               aria-label="Закрити"
             >
-              ×
+              <X size={24} />
             </button>
 
-            <img
-              src={selectedDish.image}
-              alt={selectedDish.name}
-            />
+            <div className="rm-modal-photo">
+              <DishImage item={selectedDish} />
+            </div>
 
-            <div className="menu-modal-content">
-              <span className="menu-dish-category">
+            <div className="rm-modal-content">
+              <span className="rm-card-category">
                 {selectedDish.category}
               </span>
 
-              <h2 id="menu-modal-title">
+              <h2 id="rm-modal-title">
                 {selectedDish.name}
               </h2>
 
               <p>{selectedDish.description}</p>
 
-              <div className="menu-dish-bottom">
+              <div className="rm-card-bottom">
                 <span>{selectedDish.weight}</span>
-
                 <strong>
                   {selectedDish.price.toLocaleString('uk-UA')} грн
                 </strong>
@@ -387,6 +451,7 @@ export default function RestaurantMenuPage() {
           </div>
         </div>
       )}
-    </div>
+
+    </main>
   )
 }

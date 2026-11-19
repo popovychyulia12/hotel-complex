@@ -49,8 +49,9 @@ export default function BookingCreatePage() {
       roomName: room.name,
       guestsCount: Number(draft.guestsCount),
       guestName: draft.guestName.trim(),
-      phone: draft.phone.trim(),
-      comment: (draft.comment ?? '').trim(),
+phone: draft.phone.trim(),
+email: draft.email.trim().toLowerCase(),
+comment: (draft.comment ?? '').trim(),
     })
 
     if (result.success) {

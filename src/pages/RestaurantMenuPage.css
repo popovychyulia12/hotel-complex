@@ -1,0 +1,496 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800&display=swap');
+
+/* ОСНОВНІ НАЛАШТУВАННЯ */
+
+.rm-page {
+  --rm-green: #19352a;
+  --rm-dark: #101e18;
+  --rm-light: #e6eae1;
+  --rm-cream: #f3f1e9;
+  --rm-burgundy: #641e32;
+  --rm-muted: #68786d;
+
+  width: 100%;
+  min-height: 100vh;
+  background: var(--rm-cream);
+  color: var(--rm-dark);
+  font-family: 'Manrope', sans-serif;
+  overflow: clip;
+}
+
+.rm-page *,
+.rm-page *::before,
+.rm-page *::after {
+  box-sizing: border-box;
+}
+
+.rm-page h1,
+.rm-page h2,
+.rm-page p {
+  margin: 0;
+}
+
+.rm-page h1,
+.rm-page h2 {
+  font-family: 'Onest', sans-serif;
+  letter-spacing: -0.055em;
+}
+
+.rm-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rm-page button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* HEADER */
+
+.rm-header {
+  position: relative;
+  padding: 40px 6% 85px;
+  overflow: hidden;
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(9, 25, 19, 0.75) 0%,
+      rgba(9, 25, 19, 0.55) 55%,
+      rgba(9, 25, 19, 0.4) 100%
+    ),
+    url('/menu/ресторан 4.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.rm-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rm-header-main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 50px;
+  margin-top: 100px;
+}
+
+.rm-label {
+  display: block;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.rm-header h1 {
+  margin-top: 28px;
+  color: #ffffff;
+  font-size: clamp(75px, 11vw, 180px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.09em;
+}
+
+.rm-header h1 span {
+  color: #ffffff;
+}
+
+.rm-header-main > p {
+  max-width: 320px;
+  padding-bottom: 12px;
+  color: #ffffff;
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+/* CONTENT */
+
+.rm-content {
+  padding: 70px 6% 140px;
+}
+
+.rm-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid #d0d5cc;
+}
+
+.rm-category {
+  padding: 14px 21px;
+  border: 1px solid #b9c7b8;
+  border-radius: 100px;
+  background: transparent;
+  color: var(--rm-green);
+  font-size: 12px;
+  font-weight: 700;
+
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
+}
+
+.rm-category:hover {
+  border-color: var(--rm-green);
+}
+
+.rm-category.active {
+  border-color: var(--rm-green);
+  background: var(--rm-green);
+  color: white;
+}
+
+.rm-results {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 35px 0;
+  color: var(--rm-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+/* DISH GRID */
+
+.rm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 55px 22px;
+}
+
+.rm-card {
+  min-width: 0;
+}
+
+.rm-card-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 340px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 17px;
+  background: var(--rm-green);
+  text-align: left;
+}
+
+.rm-card-image .rm-dish-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.rm-card-image:hover .rm-dish-photo {
+  transform: scale(1.06);
+}
+
+/* PLACEHOLDER */
+
+.rm-dish-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(230, 234, 225, 0.13),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #294638,
+      #101e18
+    );
+
+  color: white;
+}
+
+.rm-dish-photo-placeholder > span {
+  color: #b6c7b2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rm-dish-photo-placeholder > strong {
+  max-width: 90%;
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(27px, 2.8vw, 43px);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.12;
+}
+
+.rm-card-image .rm-dish-photo-placeholder,
+.rm-modal-photo .rm-dish-photo-placeholder {
+  width: 100%;
+  height: 100%;
+}
+
+/* CARD ARROW */
+
+.rm-card-arrow {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  color: white;
+  transition: background 0.25s;
+}
+
+.rm-card-image:hover .rm-card-arrow {
+  background: var(--rm-burgundy);
+}
+
+/* CARD CONTENT */
+
+.rm-card-content {
+  padding: 23px 2px 0;
+}
+
+.rm-card-category {
+  display: block;
+  margin-bottom: 13px;
+  color: var(--rm-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rm-card-content h2 {
+  margin-bottom: 13px;
+  font-size: clamp(24px, 2.3vw, 35px);
+  font-weight: 600;
+  line-height: 1.12;
+}
+
+.rm-card-content p {
+  min-height: 66px;
+  color: var(--rm-muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+.rm-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 19px;
+  border-top: 1px solid #cdd5ca;
+}
+
+.rm-card-bottom > span {
+  color: var(--rm-muted);
+  font-size: 12px;
+}
+
+.rm-card-bottom > strong {
+  color: var(--rm-burgundy);
+  font-family: 'Onest', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+/* MODAL */
+
+.rm-modal-backdrop {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+  background: rgba(5, 17, 10, 0.75);
+  backdrop-filter: blur(8px);
+}
+
+.rm-modal {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 20px;
+  background: var(--rm-cream);
+}
+
+.rm-modal-close {
+  position: absolute;
+  z-index: 2;
+  top: 20px;
+  right: 20px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--rm-burgundy);
+  color: white;
+}
+
+.rm-modal-photo {
+  min-height: 450px;
+  overflow: hidden;
+  background: #19352a;
+}
+
+.rm-modal-photo .rm-dish-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 450px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.rm-modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 65px 45px;
+}
+
+.rm-modal-content h2 {
+  margin-bottom: 22px;
+  font-size: clamp(36px, 4vw, 58px);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.rm-modal-content > p {
+  color: var(--rm-muted);
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+/* TABLET */
+
+@media (max-width: 1000px) {
+  .rm-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .rm-header-main {
+    margin-top: 75px;
+  }
+
+  .rm-header h1 {
+    font-size: clamp(75px, 10vw, 130px);
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+  .rm-header {
+    padding: 30px 5% 65px;
+  }
+
+  .rm-header-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 65px;
+  }
+
+  .rm-header h1 {
+    font-size: clamp(68px, 16vw, 110px);
+  }
+
+  .rm-content {
+    padding: 45px 5% 90px;
+  }
+
+  .rm-categories {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 25px;
+    scrollbar-width: thin;
+  }
+
+  .rm-category {
+    flex-shrink: 0;
+  }
+
+  .rm-grid {
+    grid-template-columns: 1fr;
+    gap: 45px;
+  }
+
+  .rm-card-image {
+    height: 340px;
+  }
+
+  .rm-card-content p {
+    min-height: 0;
+  }
+
+  .rm-modal {
+    grid-template-columns: 1fr;
+  }
+
+  .rm-modal-photo {
+    min-height: 280px;
+    height: 280px;
+  }
+
+  .rm-modal-photo .rm-dish-photo {
+    min-height: 280px;
+    height: 280px;
+  }
+
+  .rm-modal-content {
+    padding: 35px 25px;
+  }
+
+  .rm-modal-content h2 {
+    font-size: 38px;
+  }
+}
+
+/* REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-page *,
+  .rm-page *::before,
+  .rm-page *::after {
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,5 +1,12 @@
 
 import { Link } from 'react-router'
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  ArrowRight,
+} from 'lucide-react'
+
+import './SpaPage.css'
 
 const spaZones = [
   {
@@ -8,9 +15,8 @@ const spaZones = [
     title: 'Басейн',
     subtitle: 'Гармонія води та спокою',
     description:
-      'Просторий критий басейн із комфортною температурою води — ідеальне місце для плавання, відпочинку та відновлення сил після насиченого дня.',
-    image:
-      'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=1200&auto=format&fit=crop&q=85',
+      'Просторий басейн із комфортною температурою води — місце, де можна відпочити, поплавати та відновити сили.',
+    image: '/spaprogram/басейн.jpg',
   },
   {
     id: 2,
@@ -18,9 +24,8 @@ const spaZones = [
     title: 'Фінська сауна',
     subtitle: 'Тепло, яке відновлює',
     description:
-      'Насолодіться атмосферою натурального дерева, приємним теплом та відчуттям повного розслаблення.',
-    image:
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=1200&auto=format&fit=crop&q=85',
+      'Атмосфера натурального дерева, приємне сухе тепло та можливість повністю розслабитися.',
+    image: '/spaprogram/фінська сауна.jpg',
   },
   {
     id: 3,
@@ -28,9 +33,8 @@ const spaZones = [
     title: 'Джакузі',
     subtitle: 'Мить лише для себе',
     description:
-      'Тепла вода та гідромасаж допоможуть розслабитися, відволіктися від щоденних турбот і насолодитися відпочинком.',
-    image:
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&auto=format&fit=crop&q=85',
+      'Тепла вода та гідромасаж допоможуть відволіктися від щоденних турбот і насолодитися моментом.',
+    image: '/spaprogram/джакузі.jpg',
   },
   {
     id: 4,
@@ -38,184 +42,269 @@ const spaZones = [
     title: 'Масажі',
     subtitle: 'Турбота про тіло',
     description:
-      'Від класичного розслаблювального масажу до ароматерапії — обирайте процедуру, яка подарує вам відчуття легкості та комфорту.',
-    image:
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200&auto=format&fit=crop&q=85',
-  },
-]
-
-const benefits = [
-  {
-    number: '01',
-    title: 'Атмосфера спокою',
-    description:
-      'Затишні інтер’єри, природні матеріали та простір для відпочинку.',
-  },
-  {
-    number: '02',
-    title: 'Відновлення сил',
-    description:
-      'Водні процедури, тепло сауни та розслаблювальні масажі.',
-  },
-  {
-    number: '03',
-    title: 'Час для себе',
-    description:
-      'Можливість відпочити від щоденної метушні та насолодитися моментом.',
+      'Розслаблювальні масажі та SPA-ритуали, створені для відновлення внутрішньої гармонії.',
+    image: '/spaprogram/карпатська гармонія.jpg',
   },
 ]
 
 export default function SpaPage() {
   return (
-    <div className="spa-page">
-      <section className="spa-hero">
-        <img
-          src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1800&auto=format&fit=crop&q=90"
-          alt="Атмосфера SPA та відпочинку"
-        />
+    <div className="wellness-page">
+      {/* HERO */}
 
-        <div className="spa-hero-content">
-          <span className="spa-eyebrow">
-            ПРОСТІР ГАРМОНІЇ
+      <section className="wellness-hero">
+        <div className="wellness-hero-top">
+          <span className="wellness-label">
+            HOTEL & WELLNESS / SPA EXPERIENCE
           </span>
 
-          <h1>SPA & Wellness</h1>
+          <span className="wellness-hero-note">
+            МІСЦЕ, ДЕ ЧАС СПОВІЛЬНЮЄТЬСЯ
+          </span>
+        </div>
 
-          <p>
-            Зупиніть час. Відчуйте спокій.
-            Подаруйте собі відпочинок, на який заслуговуєте.
-          </p>
+        <div className="wellness-hero-layout">
+          <div className="wellness-hero-title">
+            <span className="wellness-label">
+              ПРОСТІР ДЛЯ ВАШОГО ВІДНОВЛЕННЯ
+            </span>
 
-          <a href="#spa-zones" className="spa-hero-button">
-            Відкрити простір релаксу
-          </a>
+            <h1>
+              МИСТЕЦТВО
+              <br />
+              <span>ВІДПОЧИНКУ.</span>
+            </h1>
+          </div>
+
+          <div className="wellness-hero-description">
+            <span className="wellness-symbol">✳</span>
+
+            <p>
+              Дозвольте собі сповільнитися.
+              Відчуйте гармонію, відновіть сили
+              та насолодіться моментом.
+            </p>
+
+            <a href="#wellness-about">
+              Відкрити SPA
+              <ArrowDownRight size={19} />
+            </a>
+          </div>
+        </div>
+
+        <div className="wellness-hero-photo">
+          <img
+            src="/spaprogram/басейн.jpg"
+            alt="Басейн у зоні відпочинку"
+            fetchPriority="high"
+            decoding="async"
+          />
+
+          <span className="wellness-photo-caption">
+            YOUR MOMENT OF CALM
+          </span>
         </div>
       </section>
 
-      <section className="spa-intro">
-        <div>
-          <span className="spa-eyebrow">
-            МИСТЕЦТВО ВІДПОЧИНКУ
+      {/* ABOUT */}
+
+      <section
+        className="wellness-about"
+        id="wellness-about"
+      >
+        <div className="wellness-about-left">
+          <span className="wellness-label">
+            01 / ФІЛОСОФІЯ SPA
           </span>
 
-          <h2>Відновіть гармонію тіла та думок</h2>
+          <h2>
+            СПОКІЙ
+            <br />
+            ПОЧИНАЄТЬСЯ
+            <br />
+            <span>ТУТ.</span>
+          </h2>
         </div>
 
-        <div className="spa-intro-description">
-          <p>
-            Наш SPA-простір створений для тих, хто прагне
-            відпочити від щоденної метушні та відновити
-            внутрішню рівновагу.
+        <div className="wellness-about-right">
+          <span className="wellness-about-mark">✳</span>
+
+          <p className="wellness-about-lead">
+            Іноді найкраще, що можна зробити
+            для себе, — просто зупинитися.
           </p>
 
           <p>
-            Тут на вас чекають тепла вода, затишна атмосфера,
-            аромат натурального дерева та процедури,
-            які допоможуть розслабитися й відчути
-            справжній комфорт.
+            Наш SPA-простір створений для тих,
+            хто цінує спокій, комфорт і можливість
+            відновити сили. Тут кожна деталь
+            допомагає залишити щоденну метушню
+            позаду.
           </p>
+
+          <div className="wellness-about-line">
+            <span>RELAX</span>
+            <span>RESTORE</span>
+            <span>RECONNECT</span>
+          </div>
         </div>
       </section>
 
-      <section className="spa-zones-section" id="spa-zones">
-        <div className="spa-section-heading">
-          <span className="spa-eyebrow">
-            НАШІ SPA-ЗОНИ
+      {/* ATMOSPHERE */}
+
+      <section className="wellness-atmosphere">
+        <div className="wellness-atmosphere-image">
+          <img
+            src="/spaprogram/карпатська гармонія.jpg"
+            alt="Атмосфера SPA"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <div className="wellness-atmosphere-content">
+          <span className="wellness-label">
+            ВАШ ОСОБИСТИЙ ПРОСТІР
           </span>
 
-          <h2>Простір для вашого відпочинку</h2>
+          <div>
+            <h2>
+              ЧАС
+              <br />
+              <span>ДЛЯ СЕБЕ.</span>
+            </h2>
+
+            <p>
+              Без поспіху. Без зайвого шуму.
+              Лише спокійна атмосфера,
+              приємні відчуття та можливість
+              присвятити час собі.
+            </p>
+          </div>
+
+          <span className="wellness-atmosphere-footer">
+            SLOW DOWN. FEEL MORE.
+          </span>
+        </div>
+      </section>
+
+      {/* ZONES */}
+
+      <section
+        className="wellness-zones"
+        id="wellness-zones"
+      >
+        <div className="wellness-zones-header">
+          <div>
+            <span className="wellness-label">
+              02 / НАШІ SPA-ЗОНИ
+            </span>
+
+            <h2>
+              ПРОСТІР
+              <br />
+              <span>ВІДНОВЛЕННЯ.</span>
+            </h2>
+          </div>
 
           <p>
-            Обирайте те, що допоможе вам відновити сили
-            та насолодитися кожною миттю.
+            Обирайте відпочинок, який відповідає
+            вашому настрою: вода, тепло,
+            масаж або повне розслаблення.
           </p>
         </div>
 
-        <div className="spa-zones-list">
-          {spaZones.map((zone, index) => (
+        <div className="wellness-zones-grid">
+          {spaZones.map((zone) => (
             <article
+              className="wellness-zone-card"
               key={zone.id}
-              className={`spa-zone ${
-                index % 2 === 1 ? 'spa-zone-reverse' : ''
-              }`}
             >
-              <div className="spa-zone-image">
+              <div className="wellness-zone-image">
                 <img
                   src={zone.image}
                   alt={zone.title}
                   loading="lazy"
+                  decoding="async"
                 />
+
+                <span>{zone.number}</span>
               </div>
 
-              <div className="spa-zone-content">
-                <span className="spa-zone-number">
-                  {zone.number}
-                </span>
-
-                <span className="spa-eyebrow">
-                  {zone.subtitle}
-                </span>
-
-                <h3>{zone.title}</h3>
-
-                <p>{zone.description}</p>
+              <div className="wellness-zone-heading">
+                <div>
+                  <span>{zone.subtitle}</span>
+                  <h3>{zone.title}</h3>
+                </div>
               </div>
+
+              <p>{zone.description}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="spa-benefits">
-        {benefits.map((benefit) => (
-          <article
-            key={benefit.number}
-            className="spa-benefit"
-          >
-            <span>{benefit.number}</span>
-            <h3>{benefit.title}</h3>
-            <p>{benefit.description}</p>
-          </article>
-        ))}
-      </section>
+      {/* PROGRAMS */}
 
-      <section className="spa-programs-promo">
-        <span className="spa-eyebrow">
-          ВАШ ЧАС ДЛЯ ВІДНОВЛЕННЯ
-        </span>
-
-        <h2>SPA-програми та процедури</h2>
-
-        <p>
-          Від короткого розслаблювального масажу
-          до комплексних SPA-ритуалів.
-          Знайдіть ідеальний спосіб подбати про себе.
-        </p>
-
-        <Link
-          to="/spa/programs"
-          className="spa-programs-button"
-        >
-          Переглянути SPA-програми
-        </Link>
-      </section>
-
-      <section className="spa-final">
-        <div className="spa-final-content">
-          <span className="spa-eyebrow">
-            ВІДПОЧИНОК, ЯКИЙ НАДИХАЄ
+      <section className="wellness-programs">
+        <div className="wellness-programs-content">
+          <span className="wellness-label">
+            03 / SPA-ПРОГРАМИ
           </span>
 
-          <h2>Залишайтеся з нами довше</h2>
+          <h2>
+            ВІДЧУЙТЕ
+            <br />
+            <span>ТУРБОТУ.</span>
+          </h2>
 
           <p>
-            Поєднайте SPA-відпочинок із комфортним
-            проживанням серед мальовничих Карпат.
+            Масажі, SPA-ритуали, водні процедури
+            та особливі програми для двох.
+            Знайдіть свій спосіб відновлення.
           </p>
 
-          <Link to="/rooms" className="spa-final-button">
-            Переглянути номери
+          <Link
+            to="/spa/programs"
+            className="wellness-programs-button"
+          >
+            Переглянути SPA-програми
+            <ArrowRight size={20} />
           </Link>
         </div>
+
+        <div className="wellness-programs-image">
+          <img
+            src="/spaprogram/романтичний спа.jpg"
+            alt="SPA-масаж"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </section>
+
+      {/* FINAL */}
+
+      <section className="wellness-final">
+        <span className="wellness-label">
+          ВІДПОЧИНОК, ЯКИЙ ХОЧЕТЬСЯ ПРОДОВЖИТИ
+        </span>
+
+        <h2>
+          ЗАЛИШАЙТЕСЯ
+          <br />
+          <span>ДОВШЕ.</span>
+        </h2>
+
+        <p>
+          Поєднайте SPA-відпочинок із комфортним
+          проживанням у нашому готелі.
+        </p>
+
+        <Link to="/rooms">
+          Переглянути номери
+          <ArrowUpRight size={19} />
+        </Link>
       </section>
     </div>
   )

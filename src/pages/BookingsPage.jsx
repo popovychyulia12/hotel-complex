@@ -1,11 +1,20 @@
 
 import { useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
+import {
+  ArrowUpRight,
+  CalendarDays,
+  Users,
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
+
 import { useBookings } from '../contexts/useBookings.js'
 import { rooms } from '../data/rooms.js'
-import Section from '../components/ui/Section.jsx'
+import './BookingsPage.css'
 
-// Підтримка старих бронювань
 function findBookingRoom(booking) {
   const byId = rooms.find(
     (room) => String(room.id) === String(booking.roomId)
@@ -34,7 +43,6 @@ export default function BookingsPage() {
   } = useBookings()
 
   const [searchParams, setSearchParams] = useSearchParams()
-
   const [deletingId, setDeletingId] = useState(null)
   const deletingRef = useRef(false)
 
@@ -60,7 +68,6 @@ export default function BookingsPage() {
     }, { replace: true })
   }
 
-  // Асинхронне видалення бронювання
   async function handleCancel(booking) {
     if (deletingRef.current) return
 
@@ -92,7 +99,6 @@ export default function BookingsPage() {
     }
   }
 
-  // Пошук, фільтрація та сортування підтверджених даних
   const filteredBookings = bookings
     .filter((booking) =>
       (booking.guestName ?? '')
@@ -103,7 +109,6 @@ export default function BookingsPage() {
       if (roomFilter === 'all') return true
 
       const room = findBookingRoom(booking)
-
       return room && String(room.id) === roomFilter
     })
     .sort((a, b) => {
@@ -133,210 +138,279 @@ export default function BookingsPage() {
         )
       }
 
-      // Новіші бронювання показуємо першими
       return bookings.indexOf(b) - bookings.indexOf(a)
     })
 
   return (
-    <Section id="bookings" title="Мої бронювання">
-      <p>
-        Тут зберігаються ваші бронювання.
-        Переглядайте деталі, змінюйте плани або
-        скасовуйте бронювання.
-      </p>
+    <div className="my-bookings-page">
+      <header className="my-bookings-hero">
+        <div className="my-bookings-container">
+          <span className="my-bookings-kicker">
+            HOTEL & WELLNESS / MY RESERVATIONS
+          </span>
 
-      {notice && (
-        <div role="status" className="booking-notice">
-          <p>{notice}</p>
+          <h1>
+            МОЇ
+            <br />
+            <em>БРОНЮВАННЯ.</em>
+          </h1>
 
-          <button
-            type="button"
-            onClick={() => setNotice('')}
-          >
-            Закрити
-          </button>
+          <p>
+            Переглядайте свої бронювання, змінюйте
+            плани та керуйте майбутнім відпочинком.
+          </p>
         </div>
-      )}
+      </header>
 
-      <p>
-        <Link to="/rooms">
-          + Забронювати номер
-        </Link>
-      </p>
+      <section className="my-bookings-content">
+        <div className="my-bookings-container">
+          <div className="my-bookings-heading">
+            <div>
+              <span className="my-bookings-kicker">
+                01 / ВАШІ ПОДОРОЖІ
+              </span>
 
-      <div className="booking-filters">
-        <div>
-          <label htmlFor="booking-search">
-            Пошук за іменем гостя
-          </label>
+              <h2>
+                Запланований <em>відпочинок.</em>
+              </h2>
+            </div>
 
-          <input
-            id="booking-search"
-            type="search"
-            placeholder="Введіть ім’я..."
-            value={search}
-            onChange={(event) =>
-              updateFilter('search', event.target.value)
-            }
-          />
-        </div>
+            <Link
+              to="/rooms"
+              className="my-bookings-new-button"
+            >
+              <Plus size={19} />
+              Забронювати номер
+            </Link>
+          </div>
 
-        <div>
-          <label htmlFor="booking-room-filter">
-            Категорія номера
-          </label>
+          {notice && (
+            <div className="my-bookings-notice" role="status">
+              <p>{notice}</p>
 
-          <select
-            id="booking-room-filter"
-            value={roomFilter}
-            onChange={(event) =>
-              updateFilter('room', event.target.value)
-            }
-          >
-            <option value="all">Усі категорії</option>
-
-            {rooms.map((room) => (
-              <option
-                key={room.id}
-                value={String(room.id)}
+              <button
+                type="button"
+                onClick={() => setNotice('')}
               >
-                {room.name}
-              </option>
-            ))}
-          </select>
-        </div>
+                Закрити
+              </button>
+            </div>
+          )}
 
-        <div>
-          <label htmlFor="booking-sort">
-            Сортування
-          </label>
+          <div className="my-bookings-filters">
+            <div className="my-bookings-filter">
+              <label htmlFor="booking-search">
+                Пошук за іменем гостя
+              </label>
 
-          <select
-            id="booking-sort"
-            value={sort}
-            onChange={(event) =>
-              updateFilter('sort', event.target.value)
-            }
-          >
-            <option value="new">Спочатку новіші</option>
-            <option value="name-asc">Ім’я: А–Я</option>
-            <option value="name-desc">Ім’я: Я–А</option>
-            <option value="date-asc">
-              Дата заїзду: раніше
-            </option>
-            <option value="date-desc">
-              Дата заїзду: пізніше
-            </option>
-          </select>
-        </div>
-      </div>
+              <div className="my-bookings-search-wrap">
+                <Search size={18} />
 
-      {!loading && !error && (
-        <p>
-          Знайдено бронювань:{' '}
-          <strong>{filteredBookings.length}</strong>
-        </p>
-      )}
+                <input
+                  id="booking-search"
+                  type="search"
+                  placeholder="Введіть ім’я..."
+                  value={search}
+                  onChange={(event) =>
+                    updateFilter('search', event.target.value)
+                  }
+                />
+              </div>
+            </div>
 
-      {loading ? (
-        <div role="status">
-          <p>Завантажуємо бронювання...</p>
-        </div>
-      ) : error ? (
-        <div role="alert">
-          <h3>Не вдалося завантажити бронювання</h3>
-          <p>{error}</p>
+            <div className="my-bookings-filter">
+              <label htmlFor="booking-room-filter">
+                Категорія номера
+              </label>
 
-          <button
-            type="button"
-            onClick={retry}
-          >
-            Спробувати ще раз
-          </button>
-        </div>
-      ) : bookings.length === 0 ? (
-        <div>
-          <h3>У вас поки немає бронювань</h3>
-          <p>
-            Оберіть номер і заплануйте свій
-            наступний відпочинок.
-          </p>
+              <select
+                id="booking-room-filter"
+                value={roomFilter}
+                onChange={(event) =>
+                  updateFilter('room', event.target.value)
+                }
+              >
+                <option value="all">Усі категорії</option>
 
-          <Link to="/rooms">
-            Переглянути номери
-          </Link>
-        </div>
-      ) : filteredBookings.length === 0 ? (
-        <div>
-          <h3>Нічого не знайдено</h3>
-          <p>
-            Спробуйте змінити параметри пошуку.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => setSearchParams({})}
-          >
-            Скинути фільтри
-          </button>
-        </div>
-      ) : (
-        <ul className="bookings-list">
-          {filteredBookings.map((booking) => {
-            const room = findBookingRoom(booking)
-
-            return (
-              <li key={booking.id}>
-                <h2>
-                  {room
-                    ? room.name
-                    : booking.roomName || 'Номер готелю'}
-                </h2>
-
-                <p>
-                  <strong>Гість:</strong>{' '}
-                  {booking.guestName}
-                </p>
-
-                <p>
-                  <strong>Заїзд:</strong>{' '}
-                  {booking.checkIn || 'Не вказано'}
-                </p>
-
-                <p>
-                  <strong>Виїзд:</strong>{' '}
-                  {booking.checkOut || 'Не вказано'}
-                </p>
-
-                <p>
-                  <strong>Гостей:</strong>{' '}
-                  {booking.guestsCount || 'Не вказано'}
-                </p>
-
-                <div className="form-actions">
-                  <Link to={`/bookings/${booking.id}`}>
-                    Переглянути деталі
-                  </Link>
-
-                  <Link to={`/bookings/${booking.id}/edit`}>
-                    Змінити бронювання
-                  </Link>
-
-                  <button
-                    type="button"
-                    onClick={() => handleCancel(booking)}
-                    disabled={deletingId !== null}
+                {rooms.map((room) => (
+                  <option
+                    key={room.id}
+                    value={String(room.id)}
                   >
-                    {deletingId === booking.id
-                      ? 'Скасовуємо...'
-                      : 'Скасувати бронювання'}
-                  </button>
-                </div>
-              </li>
-            )
-          })}
-        </ul>
-      )}
-    </Section>
+                    {room.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="my-bookings-filter">
+              <label htmlFor="booking-sort">
+                Сортування
+              </label>
+
+              <select
+                id="booking-sort"
+                value={sort}
+                onChange={(event) =>
+                  updateFilter('sort', event.target.value)
+                }
+              >
+                <option value="new">Спочатку новіші</option>
+                <option value="name-asc">Ім’я: А–Я</option>
+                <option value="name-desc">Ім’я: Я–А</option>
+                <option value="date-asc">
+                  Дата заїзду: раніше
+                </option>
+                <option value="date-desc">
+                  Дата заїзду: пізніше
+                </option>
+              </select>
+            </div>
+          </div>
+
+          {!loading && !error && (
+            <p className="my-bookings-count">
+              Знайдено бронювань:{' '}
+              <strong>{filteredBookings.length}</strong>
+            </p>
+          )}
+
+          {loading ? (
+            <div className="my-bookings-state" role="status">
+              <p>Завантажуємо бронювання...</p>
+            </div>
+          ) : error ? (
+            <div className="my-bookings-state" role="alert">
+              <h3>Не вдалося завантажити бронювання</h3>
+              <p>{error}</p>
+
+              <button type="button" onClick={retry}>
+                Спробувати ще раз
+              </button>
+            </div>
+          ) : bookings.length === 0 ? (
+            <div className="my-bookings-state">
+              <h3>У вас поки немає бронювань</h3>
+
+              <p>
+                Оберіть номер і заплануйте свій
+                наступний відпочинок.
+              </p>
+
+              <Link to="/rooms">
+                Переглянути номери
+              </Link>
+            </div>
+          ) : filteredBookings.length === 0 ? (
+            <div className="my-bookings-state">
+              <h3>Нічого не знайдено</h3>
+
+              <p>
+                Спробуйте змінити параметри пошуку.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setSearchParams({})}
+              >
+                Скинути фільтри
+              </button>
+            </div>
+          ) : (
+            <ul className="my-bookings-grid">
+              {filteredBookings.map((booking) => {
+                const room = findBookingRoom(booking)
+
+                return (
+                  <li
+                    key={booking.id}
+                    className="my-bookings-card"
+                  >
+                    {room?.image && (
+                      <div className="my-bookings-card-image">
+                        <img
+                          src={room.image}
+                          alt={`Інтер'єр номера ${room.name}`}
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+
+                    <div className="my-bookings-card-body">
+                      <span className="my-bookings-kicker">
+                        ВАШЕ БРОНЮВАННЯ
+                      </span>
+
+                      <h3>
+                        {room
+                          ? room.name
+                          : booking.roomName || 'Номер готелю'}
+                      </h3>
+
+                      <div className="my-bookings-card-info">
+                        <p>
+                          <strong>Гість</strong>
+                          <span>{booking.guestName}</span>
+                        </p>
+
+                        <p>
+                          <CalendarDays size={17} />
+                          <strong>Заїзд</strong>
+                          <span>{booking.checkIn || 'Не вказано'}</span>
+                        </p>
+
+                        <p>
+                          <CalendarDays size={17} />
+                          <strong>Виїзд</strong>
+                          <span>{booking.checkOut || 'Не вказано'}</span>
+                        </p>
+
+                        <p>
+                          <Users size={17} />
+                          <strong>Гостей</strong>
+                          <span>
+                            {booking.guestsCount || 'Не вказано'}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="my-bookings-card-actions">
+                        <Link
+                          to={`/bookings/${booking.id}`}
+                          className="my-bookings-details-button"
+                        >
+                          Детальніше
+                          <ArrowUpRight size={17} />
+                        </Link>
+
+                        <Link
+                          to={`/bookings/${booking.id}/edit`}
+                          className="my-bookings-edit-button"
+                        >
+                          <Pencil size={16} />
+                          Змінити
+                        </Link>
+
+                        <button
+                          type="button"
+                          className="my-bookings-delete-button"
+                          onClick={() => handleCancel(booking)}
+                          disabled={deletingId !== null}
+                        >
+                          <Trash2 size={16} />
+                          {deletingId === booking.id
+                            ? 'Скасовуємо...'
+                            : 'Скасувати'}
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </div>
+      </section>
+    </div>
   )
 }

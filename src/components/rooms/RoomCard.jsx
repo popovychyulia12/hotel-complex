@@ -1,32 +1,41 @@
 
+import { memo } from 'react'
 import { Link } from 'react-router'
-import { useState } from 'react'
+import { ArrowUpRight, Users, Check } from 'lucide-react'
 import RoomStatus from './RoomStatus.jsx'
-import AppButton from '../ui/AppButton.jsx'
 
-export default function RoomCard({
+function RoomCard({
   room,
   selected = false,
   onSelect,
 }) {
-  const [detailsOpen, setDetailsOpen] = useState(false)
-  const detailsId = `room-${room.id}-details`
   const isAvailable = room.status === 'Доступний'
 
   return (
     <article className="room-card">
-      <Link
-        to={`/rooms/${room.id}`}
-        className="room-image-link"
-        aria-label={`Переглянути номер ${room.name}`}
-      >
-        <img
-          src={room.image}
-          alt={`Інтер'єр номера ${room.name}`}
-          className="room-image"
-          loading="lazy"
-        />
-      </Link>
+      <div className="room-card-image">
+        <Link
+          to={`/rooms/${room.id}`}
+          className="room-image-link"
+          aria-label={`Переглянути номер ${room.name}`}
+        >
+          <img
+            src={room.image}
+            alt={`Інтер'єр номера ${room.name}`}
+            className="room-image"
+            loading="lazy"
+            decoding="async"
+          />
+        </Link>
+
+        <span className="room-card-number">
+          {String(room.id).padStart(2, '0')}
+        </span>
+
+        <div className="room-card-image-arrow">
+          <ArrowUpRight size={22} />
+        </div>
+      </div>
 
       <div className="room-card-content">
         <div className="room-card-top">
@@ -34,9 +43,9 @@ export default function RoomCard({
             ГОТЕЛЬНИЙ НОМЕР
           </span>
 
-          <p className="room-status">
+          <div className="room-status">
             <RoomStatus status={room.status} />
-          </p>
+          </div>
         </div>
 
         <h3>
@@ -49,54 +58,72 @@ export default function RoomCard({
           {room.description}
         </p>
 
-        <p className="room-guests">
-          До {room.guests} гостей
-        </p>
+        <div className="room-card-meta">
+          <span>
+            <Users size={17} />
+            До {room.guests} гостей
+          </span>
 
-        <div className="room-price">
-          <strong>
-            {room.price.toLocaleString('uk-UA')} грн
-          </strong>
-          <span> / ніч</span>
+          <span>
+            {room.quantity} номерів
+          </span>
         </div>
 
-        <AppButton
-          variant="secondary"
-          aria-expanded={detailsOpen}
-          aria-controls={detailsId}
-          onClick={() => setDetailsOpen((previous) => !previous)}
-        >
-          {detailsOpen ? 'Згорнути деталі' : 'Детальніше'}
-        </AppButton>
-
-        <div id={detailsId} hidden={!detailsOpen}>
-          <p>Кількість гостей: {room.guests}</p>
-          <p>Вартість за ніч: {room.price} грн</p>
-        </div>
-
-        {isAvailable ? (
-          <div className="room-actions">
-            <Link
-              to={`/bookings/new?roomId=${room.id}`}
-              className="booking-button"
-            >
-              Забронювати
-            </Link>
-
-            <AppButton
-              variant="secondary"
-              aria-pressed={selected}
-              onClick={() => onSelect(room.id)}
-            >
-              {selected ? 'Номер вибрано' : 'Вибрати номер'}
-            </AppButton>
+        <div className="room-card-footer">
+          <div className="room-price">
+            <strong>
+              {room.price.toLocaleString('uk-UA')} грн
+            </strong>
+            <span> / ніч</span>
           </div>
-        ) : (
-          <p className="room-unavailable">
-            Наразі недоступний
-          </p>
-        )}
+
+          <Link
+            to={`/rooms/${room.id}`}
+            className="room-details-link"
+          >
+            Детальніше
+            <ArrowUpRight size={19} />
+          </Link>
+        </div>
+
+        <div className="room-actions">
+          {isAvailable ? (
+            <>
+              <Link
+                to={`/bookings/new?roomId=${room.id}`}
+                className="booking-button"
+              >
+                Забронювати
+                <ArrowUpRight size={18} />
+              </Link>
+
+              <button
+                type="button"
+                className={`room-select-button ${
+                  selected ? 'is-selected' : ''
+                }`}
+                aria-pressed={selected}
+                onClick={() => onSelect?.(room.id)}
+              >
+                {selected ? (
+                  <>
+                    <Check size={17} />
+                    Номер вибрано
+                  </>
+                ) : (
+                  'Вибрати номер'
+                )}
+              </button>
+            </>
+          ) : (
+            <p className="room-unavailable">
+              Наразі недоступний для бронювання
+            </p>
+          )}
+        </div>
       </div>
     </article>
   )
 }
+
+export default memo(RoomCard)

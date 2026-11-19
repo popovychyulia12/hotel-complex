@@ -1,0 +1,1374 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800&display=swap');
+
+/* DESIGN SYSTEM */
+
+.lux-home {
+  --green: #19352a;
+  --deep-green: #101e18;
+  --green-soft: #294638;
+  --sage: #a8b7a4;
+  --sage-light: #e6eae1;
+  --cream: #f3f1e9;
+  --burgundy: #641e32;
+  --muted: #68786d;
+  width: 100%;
+  overflow: clip;
+  background: var(--sage-light);
+  color: var(--deep-green);
+  font-family: 'Manrope', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lux-home *,
+.lux-home *::before,
+.lux-home *::after {
+  box-sizing: border-box;
+}
+
+.lux-home h1,
+.lux-home h2,
+.lux-home h3,
+.lux-home p {
+  margin: 0;
+}
+
+.lux-home h1,
+.lux-home h2,
+.lux-home h3 {
+  font-family: 'Onest', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.08;
+}
+
+.lux-home h2 {
+  font-size: clamp(40px, 5vw, 76px);
+}
+
+.lux-home h2 em {
+  color: var(--burgundy);
+  font-style: normal;
+}
+
+.lux-home a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lux-home button,
+.lux-home input,
+.lux-home select {
+  font-family: 'Manrope', sans-serif;
+}
+
+.lux-home img {
+  display: block;
+  width: 100%;
+}
+
+.lux-eyebrow {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  line-height: 1.7;
+}
+
+.lux-section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 50px;
+  margin-bottom: 60px;
+}
+
+.lux-section-heading h2 {
+  margin-top: 17px;
+}
+
+.lux-section-heading > p {
+  max-width: 320px;
+  color: #586a5e;
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.lux-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid currentColor;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: gap 0.3s ease;
+}
+
+.lux-text-link:hover {
+  gap: 32px;
+}
+
+.lux-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  min-height: 55px;
+  padding: 16px 23px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--burgundy);
+  color: white !important;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.lux-button:hover {
+  transform: translateY(-3px);
+  background: #4c1728;
+}
+
+/* INTRO */
+
+.lux-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: hidden;
+  background: var(--deep-green);
+}
+
+.lux-intro > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, filter;
+}
+
+.lux-intro-skip {
+  position: absolute;
+  right: 35px;
+  bottom: 35px;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 50%;
+  background: rgba(16,30,24,0.45);
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.lux-intro-skip:hover {
+  background: var(--burgundy);
+  transform: scale(1.1);
+}
+
+/* HERO */
+
+.lux-hero-section {
+  padding: 22px 3.5% 85px;
+  background: var(--sage-light);
+}
+
+.lux-hero {
+  position: relative;
+  min-height: 680px;
+  height: min(86svh, 950px);
+  overflow: hidden;
+  border-radius: 23px;
+  background: var(--deep-green);
+  color: white;
+}
+
+.lux-hero-image,
+.lux-hero-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.lux-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 55%;
+}
+
+.lux-hero-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(7,19,13,0.32) 0%,
+    transparent 35%,
+    rgba(7,19,13,0.18) 55%,
+    rgba(7,19,13,0.8) 100%
+  );
+}
+
+.lux-hero-top {
+  position: absolute;
+  z-index: 2;
+  top: 38px;
+  right: 4.5%;
+  left: 4.5%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.lux-hero-top > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.lux-hero-floating {
+  position: absolute;
+  z-index: 2;
+  top: 24%;
+  left: 5%;
+  max-width: 280px;
+  color: white;
+}
+
+.lux-small-label {
+  display: inline-block;
+  margin-bottom: 15px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+}
+
+.lux-hero-floating p {
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.lux-hero-action {
+  position: absolute;
+  z-index: 3;
+  top: 27%;
+  right: 8%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+}
+
+.lux-hero-action > span {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.lux-hero-circle {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  color: white !important;
+  backdrop-filter: blur(8px);
+  transition:
+    background 0.4s ease,
+    transform 0.4s ease,
+    border-color 0.4s ease;
+}
+
+.lux-hero-circle svg {
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+
+.lux-hero-circle:hover {
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+  transform: scale(1.1);
+}
+
+.lux-hero-circle:hover svg {
+  transform: translate(5px,-5px);
+}
+
+.lux-hero-bottom {
+  position: absolute;
+  z-index: 2;
+  right: 3.5%;
+  bottom: 28px;
+  left: 3.5%;
+}
+
+.lux-hero-title {
+  width: 100%;
+}
+
+.lux-title-mask {
+  overflow: hidden;
+}
+
+.lux-hero-title-line {
+  display: block;
+  width: 100%;
+  color: white;
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(72px, 10.5vw, 205px);
+  font-weight: 800;
+  letter-spacing: -0.095em;
+  line-height: 0.91;
+  white-space: nowrap;
+}
+
+.lux-title-mask:nth-child(2) .lux-hero-title-line {
+  text-align: right;
+}
+
+.lux-hero-under {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 32px 3%;
+}
+
+.lux-hero-under p {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.8;
+}
+
+.lux-under-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--deep-green);
+  font-size: 13px;
+  font-weight: 700;
+  transition: gap 0.3s;
+}
+
+.lux-under-link:hover {
+  gap: 34px;
+}
+
+/* GALLERY */
+
+.lux-discover {
+  padding: 100px 6% 130px;
+  background: var(--sage-light);
+}
+
+.lux-gallery {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-rows: 280px 280px;
+  gap: 18px;
+}
+
+.lux-gallery-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--green);
+  color: white !important;
+}
+
+.lux-gallery-main {
+  grid-row: span 2;
+}
+
+.lux-gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s ease;
+}
+
+.lux-gallery-card:hover img {
+  transform: scale(1.07);
+}
+
+.lux-gallery-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(6,19,12,0.84),
+    transparent 65%
+  );
+}
+
+.lux-gallery-index {
+  position: absolute;
+  z-index: 2;
+  top: 25px;
+  left: 27px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lux-gallery-bottom {
+  position: absolute;
+  z-index: 2;
+  right: 25px;
+  bottom: 25px;
+  left: 27px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.lux-gallery-bottom small {
+  display: block;
+  margin-bottom: 10px;
+  color: #d8e6d7;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.lux-gallery-bottom h3 {
+  color: white;
+  font-size: clamp(24px, 2.6vw, 39px);
+}
+
+.lux-gallery-arrow {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 49px;
+  height: 49px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease,
+    transform 0.35s ease;
+}
+
+.lux-gallery-arrow svg {
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+
+.lux-gallery-card:hover .lux-gallery-arrow,
+.lux-gallery-card:focus-visible .lux-gallery-arrow {
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+  transform: scale(1.13);
+}
+
+.lux-gallery-card:hover .lux-gallery-arrow svg,
+.lux-gallery-card:focus-visible .lux-gallery-arrow svg {
+  transform: translate(4px,-4px);
+}
+
+.lux-gallery-card:active .lux-gallery-arrow {
+  transform: scale(0.95);
+}
+
+/* STATEMENT */
+
+.lux-statement {
+  position: relative;
+  padding: 125px 7% 145px;
+  background: var(--green);
+  color: var(--cream);
+  text-align: center;
+}
+
+.lux-statement .lux-eyebrow {
+  color: var(--sage);
+}
+
+.lux-statement p {
+  max-width: 1100px;
+  margin: 35px auto 0;
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(36px, 5vw, 78px);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1.25;
+}
+
+.lux-statement p em {
+  color: #b6c7b2;
+  font-style: normal;
+}
+
+.lux-statement-symbol {
+  position: absolute;
+  right: 8%;
+  bottom: 35px;
+  color: var(--sage);
+  font-size: 32px;
+}
+
+/* ROOMS */
+
+.lux-rooms {
+  padding: 115px 6% 145px;
+  background: #f0f2ec;
+}
+
+.lux-room-showcase {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  min-height: 600px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--green);
+  color: white;
+}
+
+.lux-room-image {
+  position: relative;
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--deep-green);
+}
+
+.lux-room-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lux-room-image-index {
+  position: absolute;
+  top: 27px;
+  left: 28px;
+  padding: 10px 15px;
+  border-radius: 50px;
+  background: rgba(16,30,24,0.65);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.lux-room-panel {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(28px,4vw,60px);
+}
+
+.lux-room-tabs {
+  display: flex;
+  gap: 9px;
+}
+
+.lux-room-tab {
+  width: 45px;
+  height: 45px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  background: transparent;
+  color: #d3dfd1;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.lux-room-tab:hover {
+  transform: translateY(-3px);
+}
+
+.lux-room-tab.active {
+  border-color: var(--burgundy);
+  background: var(--burgundy);
+  color: white;
+}
+
+.lux-room-content {
+  margin: auto 0;
+  padding: 55px 0;
+}
+
+.lux-room-content .lux-eyebrow {
+  color: var(--sage);
+}
+
+.lux-room-content h3 {
+  margin: 15px 0 25px;
+  color: white;
+  font-size: clamp(35px,4vw,64px);
+}
+
+.lux-room-content p {
+  max-width: 390px;
+  color: #d1ded0;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.lux-room-price {
+  margin: 30px 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.lux-room-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.lux-room-navigation > span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.lux-room-total {
+  color: #9eb19e;
+}
+
+.lux-room-navigation > div {
+  display: flex;
+  gap: 10px;
+}
+
+.lux-room-navigation button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.lux-room-navigation button:hover {
+  background: var(--burgundy);
+  transform: scale(1.08);
+}
+
+/* STAY PLANNER */
+
+.lux-planner-section {
+  padding: 115px 0 135px;
+  overflow: hidden;
+  background: var(--sage-light);
+}
+
+.lux-planner-heading {
+  padding: 0 6%;
+  text-align: center;
+}
+
+.lux-planner-heading h2 {
+  margin: 20px 0 25px;
+}
+
+.lux-planner-heading p {
+  max-width: 470px;
+  margin: 0 auto;
+  color: #536759;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.lux-planner-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(120px,0.5fr)
+    minmax(0,1.4fr)
+    minmax(120px,0.5fr);
+  align-items: center;
+  gap: 22px;
+  margin-top: 65px;
+  padding: 0 2.5%;
+}
+
+.lux-planner-photo {
+  height: 520px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.lux-planner-photo-left {
+  transform: translateY(45px);
+}
+
+.lux-planner-photo-right {
+  transform: translateY(-45px);
+}
+
+.lux-planner-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.lux-planner-photo:hover img {
+  transform: scale(1.06);
+}
+
+.lux-planner-center {
+  min-width: 0;
+  padding: 35px;
+  border-radius: 22px;
+  background: var(--green);
+  color: white;
+  box-shadow: 0 25px 65px rgba(16,30,24,0.12);
+}
+
+.lux-planner-center-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 25px;
+  color: #d2dfd0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.lux-planner-widget {
+  min-width: 0;
+  padding: 32px;
+  border-radius: 15px;
+  background: var(--cream);
+  color: var(--deep-green);
+}
+
+.lux-planner-widget h1,
+.lux-planner-widget h2,
+.lux-planner-widget h3 {
+  margin: 0 0 16px;
+  color: var(--deep-green);
+  font-family: 'Onest', sans-serif;
+  font-size: clamp(25px,2.4vw,36px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.lux-planner-widget p {
+  margin-bottom: 25px;
+  color: #536759;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.lux-planner-widget form {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 18px;
+  align-items: end;
+}
+
+.lux-planner-widget form > * {
+  min-width: 0;
+}
+
+.lux-planner-widget label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  color: var(--deep-green);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.lux-planner-widget select,
+.lux-planner-widget input:not([type="checkbox"]):not([type="radio"]),
+.lux-planner-widget textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid #cdd8cc;
+  border-radius: 9px;
+  outline: none;
+  background: #fffefa;
+  color: var(--deep-green);
+  font-family: 'Manrope', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.lux-planner-widget select:hover,
+.lux-planner-widget input:hover,
+.lux-planner-widget textarea:hover {
+  border-color: #849b87;
+}
+
+.lux-planner-widget select:focus,
+.lux-planner-widget input:focus,
+.lux-planner-widget textarea:focus {
+  border-color: var(--burgundy);
+  box-shadow: 0 0 0 3px rgba(100,30,50,0.1);
+}
+
+/* ОНОВЛЕНА КНОПКА */
+
+.lux-home .lux-planner-widget form button,
+.lux-home .lux-planner-widget button[type="submit"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 60px;
+  padding: 17px 26px;
+  border: 0;
+  border-radius: 10px;
+  background: #19352a;
+  color: #fff;
+  font-family: 'Manrope', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.lux-home .lux-planner-widget form button::after,
+.lux-home .lux-planner-widget button[type="submit"]::after {
+  content: '→';
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.lux-home .lux-planner-widget form button:hover,
+.lux-home .lux-planner-widget button[type="submit"]:hover {
+  background: #641e32;
+  transform: translateY(-2px);
+}
+
+.lux-home .lux-planner-widget form > button {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.lux-home .lux-planner-widget button:focus-visible {
+  outline: 3px solid #a8b7a4;
+  outline-offset: 3px;
+}
+
+/* EXPERIENCES */
+
+.lux-experiences {
+  padding: 115px 6% 145px;
+  background: #f0f2ec;
+}
+
+.lux-experience-list {
+  border-top: 1px solid #bac8bc;
+}
+
+.lux-experience {
+  display: grid;
+  grid-template-columns: 55px 150px 1fr 55px;
+  align-items: center;
+  gap: 35px;
+  min-height: 205px;
+  padding: 25px 10px;
+  border-bottom: 1px solid #bac8bc;
+  transition: background 0.3s ease, padding 0.3s ease;
+}
+
+.lux-experience:hover {
+  padding-left: 25px;
+  background: #e0e7dc;
+}
+
+.lux-experience-index {
+  align-self: start;
+  padding-top: 15px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.lux-experience-photo {
+  width: 150px;
+  height: 145px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.lux-experience-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.lux-experience:hover .lux-experience-photo img {
+  transform: scale(1.1);
+}
+
+.lux-experience-copy h3 {
+  margin: 10px 0;
+  font-size: clamp(28px,3.3vw,49px);
+}
+
+.lux-experience-copy p {
+  color: #607264;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.lux-experience-arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #b8c7b8;
+  border-radius: 50%;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
+}
+
+.lux-experience:hover .lux-experience-arrow {
+  background: var(--burgundy);
+  color: white;
+  transform: rotate(45deg);
+}
+
+/* ATMOSPHERE */
+
+.lux-atmosphere {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 740px;
+  overflow: hidden;
+  background: var(--deep-green);
+  color: white;
+}
+
+.lux-atmosphere-image,
+.lux-atmosphere-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.lux-atmosphere-image {
+  overflow: hidden;
+}
+
+.lux-atmosphere-image img {
+  position: absolute;
+  top: -10%;
+  width: 100%;
+  height: 120%;
+  object-fit: cover;
+}
+
+.lux-atmosphere-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(8,25,15,0.85),
+    rgba(8,25,15,0.25)
+  );
+}
+
+.lux-atmosphere-content {
+  position: relative;
+  z-index: 2;
+  padding: 90px 8%;
+}
+
+.lux-atmosphere .lux-eyebrow {
+  color: #d5e3d1;
+}
+
+.lux-atmosphere h2 {
+  margin: 25px 0 40px;
+  color: white;
+  font-size: clamp(48px,6.5vw,100px);
+}
+
+.lux-atmosphere h2 em {
+  color: #c4d5bf;
+}
+
+.lux-outline-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding: 17px 23px;
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: 9px;
+  color: white !important;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.lux-outline-button:hover {
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+}
+
+/* FINAL */
+
+.lux-final {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 45px;
+  padding: 115px 7% 130px;
+  background: var(--green);
+  color: white;
+}
+
+.lux-final .lux-eyebrow {
+  color: var(--sage);
+}
+
+.lux-final h2 {
+  margin-top: 20px;
+  color: white;
+}
+
+.lux-final h2 em {
+  color: #c4d5bf;
+}
+
+.lux-final-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 45px;
+  flex-shrink: 0;
+  min-height: 68px;
+  padding: 20px 27px;
+  border-radius: 9px;
+  background: var(--burgundy);
+  color: white !important;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.lux-final-button:hover {
+  transform: translateY(-4px);
+}
+
+/* FULL WIDTH */
+
+main:has(.lux-home) {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+main:has(.lux-home) > .lux-home {
+  margin: 0;
+}
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+  .lux-hero-title-line {
+    font-size: 10vw;
+  }
+
+  .lux-planner-layout {
+    grid-template-columns:
+      minmax(90px,0.35fr)
+      minmax(0,1.5fr)
+      minmax(90px,0.35fr);
+    gap: 14px;
+  }
+
+  .lux-planner-center {
+    padding: 22px;
+  }
+
+  .lux-planner-widget {
+    padding: 24px;
+  }
+
+  .lux-experience {
+    grid-template-columns: 40px 120px 1fr 48px;
+    gap: 22px;
+  }
+
+  .lux-experience-photo {
+    width: 120px;
+    height: 125px;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .lux-home h2 {
+    font-size: clamp(36px, 8vw, 56px);
+  }
+
+  .lux-section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+    margin-bottom: 35px;
+  }
+
+  .lux-hero-section {
+    padding: 12px 12px 55px;
+  }
+
+  .lux-hero {
+    min-height: 540px;
+    height: 75svh;
+    border-radius: 15px;
+  }
+
+  .lux-hero-action {
+    top: 20%;
+    right: 7%;
+  }
+
+  .lux-hero-circle {
+    width: 65px;
+    height: 65px;
+  }
+
+  .lux-hero-bottom {
+    right: 5%;
+    bottom: 30px;
+    left: 5%;
+  }
+
+  .lux-hero-title-line {
+    font-size: clamp(45px, 11vw, 85px) !important;
+  }
+
+  .lux-hero-under {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 25px;
+    padding: 30px 10px;
+  }
+
+  .lux-discover {
+    padding: 70px 5% 90px;
+  }
+
+  .lux-gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 340px 220px;
+    gap: 12px;
+  }
+
+  .lux-gallery-main {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+
+  .lux-gallery-bottom {
+    right: 15px;
+    bottom: 18px;
+    left: 15px;
+  }
+
+  .lux-gallery-bottom h3 {
+    font-size: 24px;
+  }
+
+  .lux-gallery-arrow {
+    width: 39px;
+    height: 39px;
+  }
+
+  .lux-statement {
+    padding: 85px 6% 110px;
+  }
+
+  .lux-rooms {
+    padding: 80px 5% 95px;
+  }
+
+  .lux-room-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .lux-room-image {
+    min-height: 360px;
+  }
+
+  .lux-room-panel {
+    padding: 30px;
+  }
+
+  .lux-room-content {
+    padding: 45px 0;
+  }
+
+  .lux-planner-section {
+    padding: 80px 0 95px;
+  }
+
+  .lux-planner-layout {
+    grid-template-columns: 1fr;
+    padding: 0 5%;
+    margin-top: 40px;
+  }
+
+  .lux-planner-photo {
+    display: none;
+  }
+
+  .lux-planner-center {
+    padding: 20px;
+  }
+
+  .lux-planner-widget {
+    padding: 25px;
+  }
+
+  .lux-experiences {
+    padding: 80px 5% 100px;
+  }
+
+  .lux-experience {
+    grid-template-columns: 85px 1fr 35px;
+    gap: 15px;
+    min-height: 145px;
+    padding: 20px 0;
+  }
+
+  .lux-experience-index {
+    display: none;
+  }
+
+  .lux-experience-photo {
+    width: 85px;
+    height: 95px;
+  }
+
+  .lux-experience-copy h3 {
+    font-size: 27px;
+  }
+
+  .lux-experience-copy p {
+    font-size: 12px;
+  }
+
+  .lux-experience-arrow {
+    width: 35px;
+    height: 35px;
+  }
+
+  .lux-atmosphere {
+    min-height: 550px;
+  }
+
+  .lux-atmosphere-content {
+    padding: 80px 7%;
+  }
+
+  .lux-final {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 85px 7% 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lux-hero {
+    min-height: 500px;
+  }
+
+  .lux-hero-title-line {
+    font-size: 11vw !important;
+  }
+
+  .lux-gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: 300px 240px 240px;
+  }
+
+  .lux-gallery-main {
+    grid-column: auto;
+  }
+
+  .lux-planner-widget form {
+    grid-template-columns: 1fr;
+  }
+
+  .lux-planner-widget form > button {
+    grid-column: 1;
+  }
+
+  .lux-planner-center {
+    padding: 14px;
+  }
+
+  .lux-planner-widget {
+    padding: 20px;
+  }
+
+  .lux-room-image {
+    min-height: 300px;
+  }
+
+  .lux-room-panel {
+    padding: 24px;
+  }
+
+  .lux-experience {
+    grid-template-columns: 75px 1fr 32px;
+    gap: 12px;
+  }
+
+  .lux-experience-photo {
+    width: 75px;
+    height: 85px;
+  }
+
+  .lux-experience-copy h3 {
+    font-size: 23px;
+  }
+
+  .lux-experience-copy p {
+    display: none;
+  }
+
+  .lux-final-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lux-home *,
+  .lux-home *::before,
+  .lux-home *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

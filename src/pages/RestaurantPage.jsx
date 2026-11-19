@@ -1,166 +1,286 @@
 
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
+import { ArrowUpRight, ArrowDown, ArrowRight } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import './RestaurantPage.css'
 
-const restaurantPhotos = [
-  {
-    src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Затишний інтер’єр ресторану',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Елегантне сервірування столу',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&auto=format&fit=crop&q=85',
-    alt: 'Атмосфера ресторану',
-  },
-]
+gsap.registerPlugin(ScrollTrigger)
+
+
+const photos = {
+  interior: '/menu/ресторан 1.webp',
+  dining: '/menu/ресторан 2.webp',
+  atmosphere: '/menu/ресторан 4.webp',
+  food: '/menu/ресторан 3.webp',
+}
+
 
 const features = [
   {
     number: '01',
-    title: 'Карпатська кухня',
+    title: 'Авторська кухня',
     description:
-      'Традиційні українські смаки в сучасному виконанні. Локальні продукти, сезонні інгредієнти та авторська подача.',
+      'Знайомі смаки у сучасному виконанні, сезонні продукти та увага до кожної деталі подачі.',
+    target: '#rest-gastronomy',
   },
   {
     number: '02',
-    title: 'Сніданки для гостей',
+    title: 'Неспішні сніданки',
     description:
-      'Починайте день із ароматної кави, свіжої випічки та смачних сніданків у затишній атмосфері.',
+      'Ароматна кава, улюблені ранкові страви та час, який хочеться присвятити собі.',
+    target: '#rest-story',
   },
   {
     number: '03',
     title: 'Особливі вечори',
     description:
-      'Романтична вечеря, сімейне свято чи зустріч із друзями — створюємо атмосферу для незабутніх моментів.',
+      'Зустрічі з близькими, романтичні вечері та атмосфера, у якій народжуються спогади.',
+    target: '#rest-atmosphere',
   },
 ]
 
 export default function RestaurantPage() {
+  const pageRef = useRef(null)
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return
+    }
+
+    const context = gsap.context(() => {
+      gsap.utils.toArray('.rest-reveal').forEach((element) => {
+        gsap.fromTo(
+          element,
+          { autoAlpha: 0, y: 35 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 90%',
+              once: true,
+            },
+          }
+        )
+      })
+    }, pageRef)
+
+    return () => context.revert()
+  }, [])
+
   return (
-    <div className="restaurant-page">
-      <section className="restaurant-hero">
-        <img
-          src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&auto=format&fit=crop&q=90"
-          alt="Інтер’єр ресторану готельного комплексу"
-        />
-
-        <div className="restaurant-hero-overlay">
-          <span className="restaurant-eyebrow">
-            СМАК, ЩО СТВОРЮЄ СПОГАДИ
+    <div
+      className="rest-page"
+      ref={pageRef}
+      style={{
+        display: 'block',
+        width: '100%',
+        maxWidth: 'none',
+        minWidth: 0,
+        margin: 0,
+        padding: 0,
+      }}
+    >
+      {/* INTRO */}
+      <section className="rest-intro">
+        <div className="rest-intro-copy">
+          <span className="rest-label">
+            HOTEL & WELLNESS / RESTAURANT
           </span>
 
-          <h1>Ресторан</h1>
+          <h1>
+            СМАК
+            <br />
+            <span>МОМЕНТУ.</span>
+          </h1>
 
-          <p>
-            Місце, де карпатські традиції зустрічаються
-            із сучасною гастрономією.
-          </p>
+          <div className="rest-intro-bottom">
+            <p>
+              Гастрономія, атмосфера та деталі,
+              що перетворюють звичайну вечерю
+              на особливу подію.
+            </p>
+
+            <a
+              href="#rest-story"
+              className="rest-round-link"
+              aria-label="Дізнатися про ресторан"
+            >
+              <ArrowDown size={24} />
+            </a>
+          </div>
+        </div>
+
+        <div className="rest-intro-photo">
+          <img
+            src={photos.interior}
+            alt="Інтер’єр сучасного ресторану"
+            fetchPriority="high"
+          />
+          <span>THE ART OF DINING</span>
         </div>
       </section>
 
-      <section className="restaurant-intro">
-        <div className="restaurant-intro-label">
-          <span className="restaurant-eyebrow">
-            ГАСТРОНОМІЧНА ПОДОРОЖ
-          </span>
+      {/* STORY */}
+      <section className="rest-story" id="rest-story">
+        <div className="rest-story-heading rest-reveal">
+          <span className="rest-label">01 / НАША КОНЦЕПЦІЯ</span>
 
-          <h2>Відчуйте Карпати на смак</h2>
+          <h2>
+            Більше,
+            <br />
+            ніж <em>вечеря.</em>
+          </h2>
         </div>
 
-        <div className="restaurant-intro-text">
+        <div className="rest-story-body rest-reveal">
           <p>
-            Наш ресторан — це простір, у якому кожна
-            деталь створена для вашого задоволення.
-            Теплі природні матеріали, затишне освітлення
-            та особлива атмосфера допомагають
-            насолодитися кожною миттю.
+            Наш ресторан — це місце, де смачна їжа
+            поєднується з естетикою простору,
+            теплим освітленням та невимушеною атмосферою.
           </p>
 
           <p>
-            Ми поєднуємо традиції карпатської кухні
-            із сучасними кулінарними ідеями, приділяючи
-            увагу якості продуктів, смаку та подачі.
+            Тут можна розпочати день із неспішного
+            сніданку, зустрітися з друзями або
+            провести особливий вечір удвох.
           </p>
+        </div>
+
+        <div className="rest-story-photo rest-reveal">
+          <img
+            src={photos.dining}
+            alt="Елегантно сервірований стіл у ресторані"
+            loading="lazy"
+          />
         </div>
       </section>
 
-      <section className="restaurant-features">
-        {features.map((feature) => (
-          <article
-            className="restaurant-feature"
-            key={feature.number}
-          >
-            <span>{feature.number}</span>
-            <h3>{feature.title}</h3>
-            <p>{feature.description}</p>
-          </article>
-        ))}
-      </section>
+      {/* FEATURES */}
+      <section className="rest-features">
+        <div className="rest-section-heading rest-reveal">
+          <span className="rest-label">02 / НАШІ ОСОБЛИВОСТІ</span>
 
-
-<section className="restaurant-menu-promo">
-  <span className="restaurant-eyebrow">
-    ГАСТРОНОМІЧНІ ВРАЖЕННЯ
-  </span>
-
-  <h2>Відкрийте наше меню</h2>
-
-  <p>
-    Традиційні карпатські страви, авторські
-    поєднання, ароматні напої та десерти —
-    обирайте те, що до смаку саме вам.
-  </p>
-
-  <Link
-    to="/restaurant/menu"
-    className="restaurant-cta-button"
-  >
-    Переглянути меню
-  </Link>
-</section>
-
-      <section className="restaurant-gallery-section">
-        <div className="restaurant-section-heading">
-          <span className="restaurant-eyebrow">
-            АТМОСФЕРА НАШОГО РЕСТОРАНУ
-          </span>
-
-          <h2>Моменти, які хочеться повторити</h2>
-
-          <p>
-            Насолоджуйтеся смаком, атмосферою
-            та приємними зустрічами.
-          </p>
+          <h2>
+            Кожен візит —
+            <br />
+            <em>нові враження.</em>
+          </h2>
         </div>
 
-        <div className="restaurant-gallery">
-          {restaurantPhotos.map((photo) => (
-            <img
-              key={photo.src}
-              src={photo.src}
-              alt={photo.alt}
-              loading="lazy"
-            />
+        <div className="rest-features-list">
+          {features.map((feature) => (
+            <a
+              className="rest-feature rest-reveal"
+              key={feature.number}
+              href={feature.target}
+              aria-label={`Дізнатися більше: ${feature.title}`}
+            >
+              <span className="rest-feature-number">
+                {feature.number}
+              </span>
+
+              <h3>{feature.title}</h3>
+
+              <p>{feature.description}</p>
+
+              <ArrowUpRight size={22} aria-hidden="true" />
+            </a>
           ))}
         </div>
       </section>
 
-      <section className="restaurant-cta">
-        <span className="restaurant-eyebrow">
-          ВАШ ІДЕАЛЬНИЙ ВІДПОЧИНОК
-        </span>
+      {/* MENU FEATURE */}
+      <section className="rest-menu-feature" id="rest-gastronomy">
+        <div className="rest-menu-photo">
+          <img
+            src={photos.food}
+            alt="Страва ресторанної кухні"
+            loading="lazy"
+          />
+        </div>
 
-        <h2>Залишайтеся трохи довше</h2>
+        <div className="rest-menu-content rest-reveal">
+          <span className="rest-label">03 / ГАСТРОНОМІЯ</span>
 
-        <p>
-          Доповніть гастрономічні враження
-          комфортним проживанням у нашому комплексі.
-        </p>
+          <h2>
+            Смак, який
+            <br />
+            <em>варто відкрити.</em>
+          </h2>
 
-        <Link to="/rooms" className="restaurant-cta-button">
-          Переглянути номери
+          <p>
+            Від улюблених сніданків до вишуканих
+            основних страв і десертів. Знайдіть
+            щось особливе для себе.
+          </p>
+
+          <Link to="/restaurant/menu" className="rest-menu-button">
+            Переглянути меню
+            <ArrowUpRight size={22} />
+          </Link>
+        </div>
+      </section>
+
+      {/* GALLERY */}
+      <section className="rest-gallery-section" id="rest-atmosphere">
+        <div className="rest-gallery-heading rest-reveal">
+          <span className="rest-label">04 / АТМОСФЕРА</span>
+
+          <h2>
+            Моменти,
+            <br />
+            які хочеться <em>повторити.</em>
+          </h2>
+        </div>
+
+        <div className="rest-gallery">
+          <div className="rest-gallery-large">
+            <img
+              src={photos.atmosphere}
+              alt="Атмосфера ресторану"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="rest-gallery-small">
+            <img
+              src={photos.dining}
+              alt="Сервірування столу"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="rest-gallery-text">
+            <span>GOOD FOOD. GOOD MOMENTS.</span>
+
+            <p>
+              Не просто місце для вечері.
+              Місце для ваших історій.
+            </p>
+
+            <ArrowUpRight size={30} />
+          </div>
+        </div>
+      </section>
+
+      {/* BOTTOM LINK */}
+      <section className="rest-bottom">
+        <div>
+          <span className="rest-label">ВІДКРИЙТЕ БІЛЬШЕ</span>
+
+          <h2>
+            Що сьогодні <em>до смаку?</em>
+          </h2>
+        </div>
+
+        <Link to="/restaurant/menu">
+          До меню
+          <ArrowRight size={23} />
         </Link>
       </section>
     </div>

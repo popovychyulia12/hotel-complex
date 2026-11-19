@@ -6,8 +6,10 @@ export default function SiteHeader({ title, links }) {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link className="site-title" to="/">
-          <span className="header-logo-mark">✦</span>
+        <Link className="site-title" to="/" aria-label="На головну">
+          <span className="header-logo-mark" aria-hidden="true">
+            ✦
+          </span>
 
           <span className="header-brand">
             <strong>{title}</strong>
@@ -19,6 +21,7 @@ export default function SiteHeader({ title, links }) {
 
         <Link to="/rooms" className="header-book-button">
           Забронювати
+          <span aria-hidden="true"> ↗</span>
         </Link>
       </div>
     </header>

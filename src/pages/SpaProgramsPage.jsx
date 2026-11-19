@@ -1,6 +1,19 @@
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  Clock3,
+  X,
+} from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+import './SpaProgramsPage.css'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const categories = [
   'Усі програми',
@@ -19,8 +32,7 @@ const programs = [
     price: 950,
     description:
       'Масаж усього тіла, спрямований на розслаблення м’язів та зняття напруження.',
-    image:
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/класичний масаж.jpg',
   },
   {
     id: 2,
@@ -30,8 +42,7 @@ const programs = [
     price: 1100,
     description:
       'Розслаблювальний масаж із використанням ароматичних олій.',
-    image:
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/аромамасаж.jpg',
   },
   {
     id: 3,
@@ -41,8 +52,7 @@ const programs = [
     price: 650,
     description:
       'Процедура для розслаблення м’язів спини, шиї та плечей.',
-    image:
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/масаж спини.jpg',
   },
   {
     id: 4,
@@ -52,8 +62,7 @@ const programs = [
     price: 1350,
     description:
       'Поєднання масажних технік із приємним теплом гладенького каміння.',
-    image:
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/масаж камінням.jpg',
   },
   {
     id: 5,
@@ -63,8 +72,7 @@ const programs = [
     price: 2400,
     description:
       'Комплексний ритуал із масажем, доглядом за тілом та ароматерапією.',
-    image:
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/карпатська гармонія.jpg',
   },
   {
     id: 6,
@@ -74,8 +82,7 @@ const programs = [
     price: 1750,
     description:
       'Ніжне скрабування, зволоження шкіри та розслаблювальний масаж.',
-    image:
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/шовковий дотик.jpg',
   },
   {
     id: 7,
@@ -85,8 +92,7 @@ const programs = [
     price: 2200,
     description:
       'Догляд за тілом із природними ароматами та розслаблювальними процедурами.',
-    image:
-      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/лісове відновлення.jpg',
   },
   {
     id: 8,
@@ -96,8 +102,7 @@ const programs = [
     price: 850,
     description:
       'Відпочинок у сауні з атмосферою натурального дерева та сухого тепла.',
-    image:
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/фінська сауна.jpg',
   },
   {
     id: 9,
@@ -107,8 +112,7 @@ const programs = [
     price: 750,
     description:
       'Відпочинок у теплій воді з гідромасажем.',
-    image:
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/джакузі.jpg',
   },
   {
     id: 10,
@@ -118,8 +122,7 @@ const programs = [
     price: 600,
     description:
       'Відвідування басейну та відпочинок у зоні релаксу.',
-    image:
-      'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/басейн.jpg',
   },
   {
     id: 11,
@@ -129,8 +132,7 @@ const programs = [
     price: 3900,
     description:
       'Спільний відпочинок для двох із масажем та атмосферою романтики.',
-    image:
-      'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/романтичний спа.jpg',
   },
   {
     id: 12,
@@ -140,14 +142,32 @@ const programs = [
     price: 4500,
     description:
       'Комплексна SPA-програма для пари з ароматерапією та відпочинком.',
-    image:
-      'https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=900&auto=format&fit=crop&q=85',
+    image: '/spaprogram/гармонія для двох.jpg',
   },
 ]
+
+const formatPrice = (price) =>
+  `${price.toLocaleString('uk-UA')} грн`
+
+function ProgramImage({ program, loading = 'lazy' }) {
+  return (
+    <img
+      src={program.image}
+      alt={program.name}
+      loading={loading}
+      decoding="async"
+    />
+  )
+}
 
 export default function SpaProgramsPage() {
   const [activeCategory, setActiveCategory] = useState('Усі програми')
   const [selectedProgram, setSelectedProgram] = useState(null)
+
+  const pageRef = useRef(null)
+  const modalRef = useRef(null)
+  const closeButtonRef = useRef(null)
+  const triggerRef = useRef(null)
 
   const filteredPrograms =
     activeCategory === 'Усі програми'
@@ -156,140 +176,394 @@ export default function SpaProgramsPage() {
           (program) => program.category === activeCategory
         )
 
+  const openProgram = (program, trigger) => {
+    triggerRef.current = trigger
+    setSelectedProgram(program)
+  }
+
+  const closeProgram = () => {
+    setSelectedProgram(null)
+  }
+
+  // GSAP: анімації появи секцій
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+
+    if (reduceMotion) {
+      return
+    }
+
+    const context = gsap.context(() => {
+      gsap.utils.toArray('.spp-reveal').forEach((element) => {
+        gsap.fromTo(
+          element,
+          {
+            opacity: 0,
+            y: 35,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 92%',
+              once: true,
+            },
+          }
+        )
+      })
+    }, pageRef)
+
+    return () => context.revert()
+  }, [])
+
+  // Модальне вікно: прокручування, фокус і клавіатура
+
+  useEffect(() => {
+    if (!selectedProgram) {
+      return
+    }
+
+    const modal = modalRef.current
+    const previousOverflow = document.body.style.overflow
+    const previousFocus = triggerRef.current
+
+    document.body.style.overflow = 'hidden'
+
+    closeButtonRef.current?.focus()
+
+    const getFocusableElements = () => {
+      if (!modal) return []
+
+      return Array.from(
+        modal.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter(
+        (element) => element.getClientRects().length > 0
+      )
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        closeProgram()
+        return
+      }
+
+      if (event.key !== 'Tab') {
+        return
+      }
+
+      const focusableElements = getFocusableElements()
+
+      if (focusableElements.length === 0) {
+        event.preventDefault()
+        modal?.focus()
+        return
+      }
+
+      const firstElement = focusableElements[0]
+      const lastElement =
+        focusableElements[focusableElements.length - 1]
+
+      const currentElement = document.activeElement
+      const focusIsInside = modal?.contains(currentElement)
+
+      if (event.shiftKey) {
+        if (
+          currentElement === firstElement ||
+          !focusIsInside
+        ) {
+          event.preventDefault()
+          lastElement.focus()
+        }
+      } else if (
+        currentElement === lastElement ||
+        !focusIsInside
+      ) {
+        event.preventDefault()
+        firstElement.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', handleKeyDown)
+
+      if (previousFocus?.isConnected) {
+        previousFocus.focus()
+      }
+    }
+  }, [selectedProgram])
+
   return (
-    <div className="spa-programs-page">
-      <section className="spa-programs-hero">
-        <span className="spa-eyebrow">
-          МИСТЕЦТВО ВІДНОВЛЕННЯ
-        </span>
+    <div className="spp-page" ref={pageRef}>
+      {/* ПЕРШИЙ ЕКРАН */}
 
-        <h1>SPA-програми</h1>
+      <section className="spp-hero">
+        <div className="spp-hero-top">
+          <Link to="/spa" className="spp-back">
+            <ArrowLeft size={17} />
+            Повернутися до SPA
+          </Link>
 
-        <p>
-          Обирайте процедури, які подарують вам
-          відчуття спокою, легкості та гармонії.
-        </p>
+          <span className="spp-hero-index">
+            HOTEL & WELLNESS / SPA MENU
+          </span>
+        </div>
 
-        <Link to="/spa" className="spa-back-link">
-          ← Повернутися до SPA
-        </Link>
+        <div className="spp-hero-banner">
+          <img
+            src="/spaprogram/романтичний спа.jpg"
+            alt="Атмосфера SPA"
+            fetchPriority="high"
+            decoding="async"
+          />
+
+          <div className="spp-hero-overlay">
+            <span className="spp-eyebrow">
+              ВАШ ОСОБИСТИЙ РИТУАЛ ВІДНОВЛЕННЯ
+            </span>
+
+            <h1>
+              SPA-
+              <br />
+              <em>ПРОГРАМИ.</em>
+            </h1>
+
+            <div className="spp-hero-bottom">
+              <p>
+                Від розслаблювального масажу до
+                особливих ритуалів для двох.
+                Обирайте час, присвячений собі.
+              </p>
+
+              <a href="#spp-catalog" aria-label="До програм">
+                <ArrowDownRight size={26} />
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="spa-programs-content">
-        <div className="spa-programs-categories">
+      {/* ВСТУП */}
+
+      <section className="spp-intro spp-reveal">
+        <div>
+          <span className="spp-eyebrow">
+            01 / ОБЕРІТЬ СВІЙ РИТУАЛ
+          </span>
+
+          <h2>
+            ВАШ ЧАС.
+            <br />
+            <span>ВАШІ ВІДЧУТТЯ.</span>
+          </h2>
+        </div>
+
+        <p>
+          Кожна процедура — це можливість сповільнитися,
+          відновити сили та подарувати собі кілька
+          годин справжнього комфорту.
+        </p>
+      </section>
+
+      {/* КАТАЛОГ */}
+
+      <section className="spp-catalog" id="spp-catalog">
+        <div className="spp-catalog-top spp-reveal">
+          <span className="spp-eyebrow">
+            02 / КАТАЛОГ ПРОЦЕДУР
+          </span>
+
+          <span className="spp-total">
+            {String(filteredPrograms.length).padStart(2, '0')} ПРОГРАМ
+          </span>
+        </div>
+
+        <div
+          className="spp-filters"
+          aria-label="Категорії SPA-програм"
+        >
           {categories.map((category) => (
             <button
               type="button"
               key={category}
               className={
                 activeCategory === category
-                  ? 'spa-category-button selected'
-                  : 'spa-category-button'
+                  ? 'spp-filter active'
+                  : 'spp-filter'
               }
               onClick={() => setActiveCategory(category)}
+              aria-pressed={activeCategory === category}
             >
               {category}
             </button>
           ))}
         </div>
 
-        <p className="spa-programs-count">
-          Знайдено програм: {filteredPrograms.length}
-        </p>
-
-        <div className="spa-programs-grid">
-          {filteredPrograms.map((program) => (
+        <div className="spp-grid">
+          {filteredPrograms.map((program, index) => (
             <article
-              className="spa-program-card"
+              className="spp-card"
               key={program.id}
             >
               <button
                 type="button"
-                className="spa-program-image-button"
-                onClick={() => setSelectedProgram(program)}
+                className="spp-card-image"
+                onClick={(event) =>
+                  openProgram(program, event.currentTarget)
+                }
                 aria-label={`Детальніше про ${program.name}`}
               >
-                <img
-                  src={program.image}
-                  alt={program.name}
-                  loading="lazy"
-                />
-              </button>
+                <ProgramImage program={program} />
 
-              <div className="spa-program-info">
-                <span className="spa-program-category">
-                  {program.category}
+                <span className="spp-card-number">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
 
-                <h2>{program.name}</h2>
+                <span className="spp-card-arrow">
+                  <ArrowUpRight size={23} />
+                </span>
+              </button>
+
+              <div className="spp-card-body">
+                <div className="spp-card-meta">
+                  <span>{program.category}</span>
+
+                  <span className="spp-duration">
+                    <Clock3 size={14} />
+                    {program.duration}
+                  </span>
+                </div>
+
+                <h3>{program.name}</h3>
 
                 <p>{program.description}</p>
 
-                <div className="spa-program-bottom">
-                  <span>{program.duration}</span>
-
+                <div className="spp-card-footer">
                   <strong>
-                    {program.price.toLocaleString('uk-UA')} грн
+                    {formatPrice(program.price)}
                   </strong>
-                </div>
 
-                <button
-                  type="button"
-                  className="spa-program-details"
-                  onClick={() => setSelectedProgram(program)}
-                >
-                  Детальніше
-                </button>
+                  <button
+                    type="button"
+                    onClick={(event) =>
+                      openProgram(program, event.currentTarget)
+                    }
+                  >
+                    Детальніше
+                    <ArrowUpRight size={17} />
+                  </button>
+                </div>
               </div>
             </article>
           ))}
         </div>
       </section>
 
+      {/* ЗАВЕРШАЛЬНИЙ БЛОК */}
+
+      <section className="spp-bottom">
+        <div className="spp-bottom-inner spp-reveal">
+          <span className="spp-eyebrow">
+            ВІДПОЧИНОК ПОЧИНАЄТЬСЯ З ВИБОРУ
+          </span>
+
+          <h2>
+            ПОДАРУЙТЕ СОБІ
+            <br />
+            <em>МИТЬ СПОКОЮ.</em>
+          </h2>
+
+          <p>
+            Відкрийте для себе простір,
+            де кожна деталь створена для вашого комфорту.
+          </p>
+
+          <Link to="/spa" className="spp-bottom-link">
+            Повернутися до SPA
+            <ArrowUpRight size={19} />
+          </Link>
+        </div>
+      </section>
+
+      {/* МОДАЛЬНЕ ВІКНО */}
+
       {selectedProgram && (
         <div
-          className="spa-modal-backdrop"
-          onClick={() => setSelectedProgram(null)}
+          className="spp-modal-backdrop"
+          onClick={closeProgram}
         >
           <div
-            className="spa-modal"
+            ref={modalRef}
+            className="spp-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="spa-modal-title"
+            aria-labelledby="spp-modal-title"
+            tabIndex={-1}
             onClick={(event) => event.stopPropagation()}
           >
             <button
+              ref={closeButtonRef}
               type="button"
-              className="spa-modal-close"
-              onClick={() => setSelectedProgram(null)}
+              className="spp-modal-close"
+              onClick={closeProgram}
               aria-label="Закрити"
             >
-              ×
+              <X size={22} />
             </button>
 
-            <img
-              src={selectedProgram.image}
-              alt={selectedProgram.name}
-            />
+            <div className="spp-modal-image">
+              <ProgramImage
+                program={selectedProgram}
+                loading="eager"
+              />
+            </div>
 
-            <div className="spa-modal-content">
-              <span className="spa-program-category">
+            <div className="spp-modal-content">
+              <span className="spp-eyebrow">
                 {selectedProgram.category}
               </span>
 
-              <h2 id="spa-modal-title">
+              <h2 id="spp-modal-title">
                 {selectedProgram.name}
               </h2>
 
               <p>{selectedProgram.description}</p>
 
-              <div className="spa-program-bottom">
-                <span>{selectedProgram.duration}</span>
+              <div className="spp-modal-details">
+                <div>
+                  <span>ТРИВАЛІСТЬ</span>
+                  <strong>
+                    {selectedProgram.duration}
+                  </strong>
+                </div>
 
-                <strong>
-                  {selectedProgram.price.toLocaleString('uk-UA')} грн
-                </strong>
+                <div>
+                  <span>ВАРТІСТЬ</span>
+                  <strong>
+                    {formatPrice(selectedProgram.price)}
+                  </strong>
+                </div>
               </div>
+
+              <button
+                type="button"
+                className="spp-modal-button"
+                onClick={closeProgram}
+              >
+                Повернутися до програм
+                <ArrowLeft size={18} />
+              </button>
             </div>
           </div>
         </div>

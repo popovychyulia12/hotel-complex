@@ -1,6 +1,5 @@
 
-import AppButton from '../ui/AppButton.jsx'
-import FormField from '../ui/FormField.jsx'
+import { ArrowUpRight, RotateCcw } from 'lucide-react'
 
 export default function BookingFormPreview({
   idPrefix,
@@ -11,6 +10,7 @@ export default function BookingFormPreview({
   onSubmit,
   errors = {},
   isSaving = false,
+  maxGuests,
 }) {
   const fieldId = (name) => `${idPrefix}-${name}`
 
@@ -23,120 +23,202 @@ export default function BookingFormPreview({
   }
 
   return (
-    <form onSubmit={(event) => {
-      event.preventDefault()
-      onSubmit?.()
-    }}>
-      <h3>Дані для бронювання</h3>
+    <form
+      className="booking-modern-form"
+      noValidate
+      onSubmit={(event) => {
+        event.preventDefault()
+        onSubmit?.()
+      }}
+    >
+      <div className="booking-fields-grid">
+        <div className="booking-field">
+          <label htmlFor={fieldId('guestName')}>
+            Ім’я гостя *
+          </label>
 
-      <FormField id={fieldId('guestName')} label="Ім’я гостя *">
-        <input
-          id={fieldId('guestName')}
-          type="text"
-          value={draft.guestName ?? ''}
-          onChange={(e) => onFieldChange('guestName', e.target.value)}
-          aria-invalid={Boolean(errors.guestName)}
-        />
-        {renderError('guestName')}
-      </FormField>
+          <input
+            id={fieldId('guestName')}
+            type="text"
+            autoComplete="name"
+            placeholder="Введіть ваше ім’я"
+            value={draft.guestName ?? ''}
+            onChange={(event) =>
+              onFieldChange('guestName', event.target.value)
+            }
+            aria-invalid={Boolean(errors.guestName)}
+          />
 
-      <FormField id={fieldId('phone')} label="Номер телефону *">
-        <input
-          id={fieldId('phone')}
-          type="tel"
-          placeholder="+380XXXXXXXXX"
-          value={draft.phone ?? ''}
-          onChange={(e) => onFieldChange('phone', e.target.value)}
-          aria-invalid={Boolean(errors.phone)}
-        />
-        {renderError('phone')}
-      </FormField>
+          {renderError('guestName')}
+        </div>
 
-      <FormField id={fieldId('room')} label="Обраний номер">
-        <input
-          id={fieldId('room')}
-          type="text"
-          value={roomName}
-          readOnly
-        />
-      </FormField>
+        <div className="booking-field">
+          <label htmlFor={fieldId('phone')}>
+            Номер телефону *
+          </label>
 
-      <FormField id={fieldId('checkIn')} label="Дата заїзду *">
-        <input
-          id={fieldId('checkIn')}
-          type="date"
-          value={draft.checkIn ?? ''}
-          onChange={(e) => onFieldChange('checkIn', e.target.value)}
-          aria-invalid={Boolean(errors.checkIn)}
-        />
-        {renderError('checkIn')}
-      </FormField>
+          <input
+            id={fieldId('phone')}
+            type="tel"
+            autoComplete="tel"
+            placeholder="+380XXXXXXXXX"
+            value={draft.phone ?? ''}
+            onChange={(event) =>
+              onFieldChange('phone', event.target.value)
+            }
+            aria-invalid={Boolean(errors.phone)}
+          />
 
-      <FormField id={fieldId('checkOut')} label="Дата виїзду *">
-        <input
-          id={fieldId('checkOut')}
-          type="date"
-          value={draft.checkOut ?? ''}
-          onChange={(e) => onFieldChange('checkOut', e.target.value)}
-          aria-invalid={Boolean(errors.checkOut)}
-        />
-        {renderError('checkOut')}
-      </FormField>
+          {renderError('phone')}
+        </div>
 
-      <FormField id={fieldId('guestsCount')} label="Кількість гостей *">
-        <input
-          id={fieldId('guestsCount')}
-          type="number"
-          min="1"
-          step="1"
-          value={draft.guestsCount ?? 1}
-          onChange={(e) => onFieldChange('guestsCount', e.target.value)}
-          aria-invalid={Boolean(errors.guestsCount)}
-        />
-        {renderError('guestsCount')}
-      </FormField>
+        <div className="booking-field booking-field-full">
+          <label htmlFor={fieldId('email')}>
+            Електронна пошта *
+          </label>
 
-      <FormField
-        id={fieldId('comment')}
-        label="Додаткові побажання"
-        hint="Наприклад, раннє заселення або особливі побажання."
-      >
-        <textarea
-          id={fieldId('comment')}
-          rows={3}
-          maxLength={300}
-          value={draft.comment ?? ''}
-          onChange={(e) => onFieldChange('comment', e.target.value)}
-        />
-        {renderError('comment')}
-      </FormField>
+          <input
+            id={fieldId('email')}
+            type="email"
+            autoComplete="email"
+            placeholder="example@gmail.com"
+            required
+            value={draft.email ?? ''}
+            onChange={(event) =>
+              onFieldChange('email', event.target.value)
+            }
+            aria-invalid={Boolean(errors.email)}
+          />
 
-      <label htmlFor={fieldId('needsHelp')}>
+          {renderError('email')}
+        </div>
+
+        <div className="booking-field booking-field-full">
+          <label htmlFor={fieldId('room')}>
+            Обраний номер
+          </label>
+
+          <input
+            id={fieldId('room')}
+            type="text"
+            value={roomName}
+            readOnly
+          />
+        </div>
+
+        <div className="booking-field">
+          <label htmlFor={fieldId('checkIn')}>
+            Дата заїзду *
+          </label>
+
+          <input
+            id={fieldId('checkIn')}
+            type="date"
+            value={draft.checkIn ?? ''}
+            onChange={(event) =>
+              onFieldChange('checkIn', event.target.value)
+            }
+            aria-invalid={Boolean(errors.checkIn)}
+          />
+
+          {renderError('checkIn')}
+        </div>
+
+        <div className="booking-field">
+          <label htmlFor={fieldId('checkOut')}>
+            Дата виїзду *
+          </label>
+
+          <input
+            id={fieldId('checkOut')}
+            type="date"
+            value={draft.checkOut ?? ''}
+            onChange={(event) =>
+              onFieldChange('checkOut', event.target.value)
+            }
+            aria-invalid={Boolean(errors.checkOut)}
+          />
+
+          {renderError('checkOut')}
+        </div>
+
+        <div className="booking-field booking-field-full">
+          <label htmlFor={fieldId('guestsCount')}>
+            Кількість гостей *
+          </label>
+
+          <input
+            id={fieldId('guestsCount')}
+            type="number"
+            min="1"
+            max={maxGuests}
+            step="1"
+            value={draft.guestsCount ?? '1'}
+            onChange={(event) =>
+              onFieldChange('guestsCount', event.target.value)
+            }
+            aria-invalid={Boolean(errors.guestsCount)}
+          />
+
+          {renderError('guestsCount')}
+        </div>
+
+        <div className="booking-field booking-field-full">
+          <label htmlFor={fieldId('comment')}>
+            Додаткові побажання
+          </label>
+
+          <textarea
+            id={fieldId('comment')}
+            rows={4}
+            maxLength={300}
+            placeholder="Наприклад, раннє заселення або особливі побажання..."
+            value={draft.comment ?? ''}
+            onChange={(event) =>
+              onFieldChange('comment', event.target.value)
+            }
+          />
+
+          {renderError('comment')}
+        </div>
+      </div>
+
+      <label className="booking-help-checkbox">
         <input
           id={fieldId('needsHelp')}
           type="checkbox"
-          checked={draft.needsHelp ?? false}
-          onChange={(e) => onFieldChange('needsHelp', e.target.checked)}
+          checked={Boolean(draft.needsHelp)}
+          onChange={(event) =>
+            onFieldChange('needsHelp', event.target.checked)
+          }
         />
-        Потрібна допомога адміністратора
+
+        <span>Потрібна допомога адміністратора</span>
       </label>
 
-      
-<div className="form-actions">
-  <AppButton
-    type="button"
-    variant="secondary"
-    onClick={onReset}
-    disabled={isSaving}
-  >
-    Очистити форму
-  </AppButton>
+      <div className="booking-form-actions">
+        <button
+          type="button"
+          className="booking-reset-button"
+          onClick={onReset}
+          disabled={isSaving}
+        >
+          <RotateCcw size={17} />
+          Очистити форму
+        </button>
 
-  <AppButton type="submit" disabled={isSaving}>
-  {isSaving ? 'Зберігаємо...' : 'Зберегти бронювання'}
-</AppButton>
-</div>
+        <button
+          type="submit"
+          className="booking-submit-button"
+          disabled={isSaving}
+        >
+          {isSaving
+            ? 'Зберігаємо...'
+            : 'Зберегти бронювання'}
 
+          {!isSaving && <ArrowUpRight size={18} />}
+        </button>
+      </div>
     </form>
   )
 }

@@ -76,6 +76,7 @@ export default function BookingEditPage() {
   const initialDraft = {
     guestName: booking.guestName ?? '',
     phone: booking.phone ?? '',
+    email: booking.email ?? '',
     checkIn: booking.checkIn ?? '',
     checkOut: booking.checkOut ?? '',
     guestsCount: String(booking.guestsCount ?? 1),
@@ -90,6 +91,7 @@ export default function BookingEditPage() {
       roomName: room.name,
       guestName: draft.guestName.trim(),
       phone: draft.phone.trim(),
+      email: draft.email.trim().toLowerCase(),
       guestsCount: Number(draft.guestsCount),
       comment: (draft.comment ?? '').trim(),
     })
@@ -101,10 +103,7 @@ export default function BookingEditPage() {
     return result
   }
 
-  
-return (
-  <>
-
+  return (
     <BookingPage
       key={booking.id}
       bookingId={booking.id}
@@ -115,7 +114,5 @@ return (
       onCancel={() => navigate('/bookings')}
       cancelLabel="Повернутися до бронювань"
     />
-  </>
-)
+  )
 }
-
