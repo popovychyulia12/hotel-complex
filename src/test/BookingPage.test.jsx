@@ -1,13 +1,15 @@
 
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  render,
+  screen,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
 
 import BookingPage from '../pages/BookingPage.jsx'
 
-// Підміняємо тільки доступність номерів.
-// Саму форму та її обробник залишаємо справжніми.
 vi.mock('../contexts/useBookings.js', () => ({
   useBookings: () => ({
     getAvailableRooms: () => 6,
@@ -25,8 +27,9 @@ const room = {
 const initialDraft = {
   guestName: 'Тестовий гість',
   phone: '+380991234567',
-  checkIn: '2026-11-10',
-  checkOut: '2026-11-12',
+  email: 'test@example.com',
+  checkIn: '2026-12-10',
+  checkOut: '2026-12-12',
   guestsCount: '2',
   comment: 'Раннє заселення',
   needsHelp: false,
@@ -66,22 +69,26 @@ describe('Асинхронне збереження бронювання', () =>
       })
     )
 
-    expect(
-      screen.getByRole('button', { name: 'Зберігаємо...' })
-    ).toBeDisabled()
-
     expect(onSave).toHaveBeenCalledTimes(1)
 
-    finishSaving({
-      success: false,
-      error: 'Імітована помилка збереження.',
+    expect(
+      screen.getByRole('button', {
+        name: 'Зберігаємо...',
+      })
+    ).toBeDisabled()
+
+    await act(async () => {
+      finishSaving({
+        success: false,
+        error: 'Імітована помилка збереження.',
+      })
     })
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Імітована помилка збереження.')
-      ).toBeInTheDocument()
-    })
+    expect(
+      await screen.findByText(
+        'Імітована помилка збереження.'
+      )
+    ).toBeInTheDocument()
 
     expect(
       screen.getByRole('button', {
@@ -106,8 +113,12 @@ describe('Асинхронне збереження бронювання', () =>
       })
     )
 
+    expect(onSave).toHaveBeenCalledTimes(1)
+
     expect(
-      await screen.findByText('Сервіс тимчасово недоступний.')
+      await screen.findByText(
+        'Сервіс тимчасово недоступний.'
+      )
     ).toBeInTheDocument()
 
     expect(
@@ -117,6 +128,10 @@ describe('Асинхронне збереження бронювання', () =>
     expect(
       screen.getByLabelText(/Номер телефону/i)
     ).toHaveValue('+380991234567')
+
+    expect(
+      screen.getByLabelText(/Електронна пошта/i)
+    ).toHaveValue('test@example.com')
 
     expect(
       screen.getByLabelText(/Додаткові побажання/i)
@@ -148,11 +163,15 @@ describe('Асинхронне збереження бронювання', () =>
     )
 
     expect(
-      screen.getByText('Вкажіть ім’я від 2 до 60 символів.')
+      screen.getByText(
+        'Вкажіть ім’я від 2 до 60 символів.'
+      )
     ).toBeInTheDocument()
 
     expect(
-      screen.getByText('Введіть телефон у форматі +380XXXXXXXXX.')
+      screen.getByText(
+        'Введіть телефон у форматі +380XXXXXXXXX.'
+      )
     ).toBeInTheDocument()
 
     expect(onSave).not.toHaveBeenCalled()

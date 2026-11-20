@@ -7,9 +7,11 @@ import {
   it,
   vi,
 } from 'vitest'
+
 import RoomSelectionProvider from '../providers/RoomSelectionProvider.jsx'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router'
+
 import {
   act,
   render,
@@ -38,10 +40,11 @@ const booking = {
   id: 'test-booking-1',
   guestName: 'Тестовий гість',
   phone: '+380991234567',
+  email: 'test@example.com',
   roomId: 1,
   roomName: 'Стандарт двомісний',
-  checkIn: '2026-11-10',
-  checkOut: '2026-11-12',
+  checkIn: '2026-12-10',
+  checkOut: '2026-12-12',
   guestsCount: 2,
   comment: '',
   needsHelp: false,
@@ -53,14 +56,26 @@ function renderApp(initialPath = '/bookings') {
       <RoomSelectionProvider>
         <BookingsProvider>
           <Routes>
-            <Route path="/bookings" element={<BookingsPage />} />
-            <Route path="/bookings/new" element={<BookingCreatePage />} />
+            <Route
+              path="/bookings"
+              element={<BookingsPage />}
+            />
+            <Route
+              path="/bookings/new"
+              element={<BookingCreatePage />}
+            />
             <Route
               path="/bookings/:bookingId"
               element={<BookingDetailsPage />}
             />
-            <Route path="/rooms" element={<h1>Каталог номерів</h1>} />
-            <Route path="*" element={<h1>Сторінку не знайдено</h1>} />
+            <Route
+              path="/rooms"
+              element={<h1>Каталог номерів</h1>}
+            />
+            <Route
+              path="*"
+              element={<h1>Сторінку не знайдено</h1>}
+            />
           </Routes>
         </BookingsProvider>
       </RoomSelectionProvider>
@@ -88,38 +103,38 @@ describe('Інтеграція бронювань', () => {
     expect(adapter.getAll).toHaveBeenCalled()
   })
 
-it('не показує записи до завершення завантаження', async () => {
-  let finishLoading
+  it('не показує записи до завершення завантаження', async () => {
+    let finishLoading
 
-  adapter.getAll.mockImplementation(
-    () =>
-      new Promise((resolve) => {
-        finishLoading = resolve
-      })
-  )
+    adapter.getAll.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finishLoading = resolve
+        })
+    )
 
-  renderApp()
+    renderApp()
 
-  await waitFor(() => {
-    expect(adapter.getAll).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(adapter.getAll).toHaveBeenCalled()
+    })
+
+    expect(
+      screen.queryByText('Тестовий гість')
+    ).not.toBeInTheDocument()
+
+    expect(
+      screen.queryByText(/У вас поки немає бронювань/i)
+    ).not.toBeInTheDocument()
+
+    await act(async () => {
+      finishLoading([booking])
+    })
+
+    expect(
+      await screen.findByText('Тестовий гість')
+    ).toBeInTheDocument()
   })
-
-  expect(
-    screen.queryByText('Тестовий гість')
-  ).not.toBeInTheDocument()
-
-  expect(
-    screen.queryByText(/У вас поки немає бронювань/i)
-  ).not.toBeInTheDocument()
-
-  await act(async () => {
-    finishLoading([booking])
-  })
-
-  expect(
-    await screen.findByText('Тестовий гість')
-  ).toBeInTheDocument()
-})
 
   it('показує помилку та дозволяє повторити запит', async () => {
     const user = userEvent.setup()
@@ -157,7 +172,9 @@ it('не показує записи до завершення завантаж�
     renderApp()
 
     expect(
-      await screen.findByText(/У вас поки немає бронювань/i)
+      await screen.findByText(
+        /У вас поки немає бронювань/i
+      )
     ).toBeInTheDocument()
   })
 
@@ -165,25 +182,23 @@ it('не показує записи до завершення завантаж�
     renderApp('/bookings/unknown-id')
 
     expect(
-      await screen.findByText(/Бронювання не знайдено/i)
+      await screen.findByText(
+        /Бронювання не знайдено/i
+      )
     ).toBeInTheDocument()
   })
 
-it('показує сторінку 404 для невідомого маршруту', async () => {
-  renderApp('/unknown-page')
+  it('показує сторінку 404 для невідомого маршруту', async () => {
+    renderApp('/unknown-page')
 
-  expect(
-    screen.getByText('Сторінку не знайдено')
-  ).toBeInTheDocument()
+    expect(
+      screen.getByText('Сторінку не знайдено')
+    ).toBeInTheDocument()
 
-  await waitFor(() => {
-    expect(adapter.getAll).toHaveBeenCalled()
+    await waitFor(() => {
+      expect(adapter.getAll).toHaveBeenCalledTimes(1)
+    })
   })
-
-  await waitFor(() => {
-    expect(adapter.getAll).toHaveBeenCalledTimes(1)
-  })
-})
 
   it('відкриває деталі бронювання зі списку', async () => {
     const user = userEvent.setup()
@@ -194,15 +209,15 @@ it('показує сторінку 404 для невідомого маршру
 
     await user.click(
       screen.getByRole('link', {
-        name: 'Переглянути деталі',
+        name: 'Детальніше',
       })
     )
 
-    await waitFor(() => {
-      expect(
-        screen.getByText('Деталі мого бронювання')
-      ).toBeInTheDocument()
-    })
+    expect(
+      await screen.findByRole('heading', {
+        name: /ДЕТАЛІ ВАШОГО/i,
+      })
+    ).toBeInTheDocument()
   })
 
   it('створює бронювання через форму та відображає його у списку', async () => {
@@ -218,8 +233,8 @@ it('показує сторінку 404 для невідомого маршру
     renderApp('/bookings/new?roomId=1')
 
     await screen.findByRole('heading', {
-  name: 'Створення бронювання',
-})
+      name: /ВАШ ІДЕАЛЬНИЙ/i,
+    })
 
     await user.type(
       screen.getByLabelText(/Ім’я гостя/i),
@@ -232,13 +247,18 @@ it('показує сторінку 404 для невідомого маршру
     )
 
     await user.type(
+      screen.getByLabelText(/Електронна пошта/i),
+      'maria@example.com'
+    )
+
+    await user.type(
       screen.getByLabelText(/Дата заїзду/i),
-      '2026-11-10'
+      '2026-12-10'
     )
 
     await user.type(
       screen.getByLabelText(/Дата виїзду/i),
-      '2026-11-12'
+      '2026-12-12'
     )
 
     await user.click(

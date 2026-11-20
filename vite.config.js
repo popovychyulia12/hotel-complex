@@ -11,5 +11,8 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.js'],
     css: true,
     clearMocks: true,
+    env: {
+      VITE_DATA_MODE: 'mock',
+    },
   },
 })
